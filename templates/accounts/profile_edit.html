@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<h1>Edit Profile</h1><p><strong>Email:</strong> {{ request.user.email }} <span class="muted">(cannot be changed)</span></p><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button type="submit">Save Changes</button></form><p><a href="{% url 'profile' %}">Back to profile</a></p>{% endblock %}
