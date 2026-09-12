@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Projects</title>
+</head>
+
+<body>
+
+    <h1>All Projects</h1>
+
+    <a href="{% url 'project_create' %}">Create New Project</a>
+
+    <hr>
+
+    {% for project in projects %}
+
+    <div>
+        <h2>
+            <a href="{% url 'project_detail' project.pk %}">
+                {{ project.title }}
+            </a>
+        </h2>
+
+        <p>{{ project.details }}</p>
+
+        <p>Target: {{ project.target }} EGP</p>
+
+        <p>Category: {{ project.category.name }}</p>
+
+        <p>
+            Start: {{ project.start_time }}
+            <br>
+            End: {{ project.end_time }}
+        </p>
+
+        <hr>
+    </div>
+
+    {% empty %}
+
+    <p>No projects available.</p>
+
+    {% endfor %}
+
+</body>
+
+</html>
