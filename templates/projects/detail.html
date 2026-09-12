@@ -1,1 +1,266 @@
-{% extends 'base.html' %}{% block content %}<h1>{{project.title}}</h1><p>{{project.details}}</p><p>Category: {{project.category}} | Target: {{project.target}} EGP | Raised: {{project.raised}} EGP</p><div style='background:#ddd'><div class='bar' style='width:{{project.progress}}%'></div></div><p>Average rating: {{project.rating|floatformat:1}}/5</p>{% if user.is_authenticated %}<h3>Donate</h3><form method='post' action='/projects/{{project.pk}}/donate/'>{% csrf_token %}{{donation_form.as_p}}<button>Donate</button></form><h3>Comment</h3><form method='post' action='/projects/{{project.pk}}/comment/'>{% csrf_token %}{{comment_form.as_p}}<button>Comment</button></form><h3>Rate</h3><form method='post' action='/projects/{{project.pk}}/rate/'>{% csrf_token %}{{rating_form.as_p}}<button>Rate</button></form><h3>Report</h3><form method='post' action='/projects/{{project.pk}}/report/'>{% csrf_token %}{{report_form.as_p}}<button>Report</button></form>{% if user == project.creator %}<a class='btn danger' href='/projects/{{project.pk}}/cancel/'>Cancel Project</a>{% endif %}{% endif %}<h2>Comments</h2>{% for c in project.comments.all %}<div class='card'><b>{{c.user.first_name}}</b>: {{c.text}}</div>{% empty %}<p>No comments yet.</p>{% endfor %}{% endblock %}
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ project.title }}</h1>
+
+<p>{{ project.details }}</p>
+
+<p>
+    Category: {{ project.category }}
+    |
+    Target: {{ project.target }} EGP
+    |
+    Raised: {{ project.raised }} EGP
+</p>
+
+<div style="background:#ddd; width:100%; max-width:600px;">
+    <div
+        style="
+            background:#333;
+            height:20px;
+            width:{{ project.progress }}%;
+        ">
+    </div>
+</div>
+
+<p>
+    Average Rating:
+    {{ project.rating|floatformat:1 }}/5
+</p>
+
+
+<h2>Project Pictures</h2>
+
+{% if project.images.all %}
+
+<div style="display:flex; align-items:center; gap:10px;">
+
+    <button
+        type="button"
+        onclick="document.getElementById('imageSlider').scrollBy({left:-350, behavior:'smooth'})">
+        &lt;
+    </button>
+
+    <div
+        id="imageSlider"
+        style="
+            display:flex;
+            gap:15px;
+            overflow-x:auto;
+            scroll-behavior:smooth;
+            max-width:800px;
+        ">
+
+        {% for image in project.images.all %}
+
+        <img
+            src="{{ image.image.url }}"
+            alt="{{ project.title }}"
+            style="
+                width:320px;
+                height:220px;
+                object-fit:cover;
+                flex:0 0 auto;
+            "
+        >
+
+        {% endfor %}
+
+    </div>
+
+    <button
+        type="button"
+        onclick="document.getElementById('imageSlider').scrollBy({left:350, behavior:'smooth'})">
+        &gt;
+    </button>
+
+</div>
+
+{% else %}
+
+<p>No pictures available.</p>
+
+{% endif %}
+
+
+{% if user.is_authenticated %}
+
+<hr>
+
+<h3>Donate</h3>
+
+<form
+    method="post"
+    action="{% url 'donate' project.pk %}">
+
+    {% csrf_token %}
+    {{ donation_form.as_p }}
+
+    <button type="submit">
+        Donate
+    </button>
+
+</form>
+
+
+<hr>
+
+<h3>Add Comment</h3>
+
+<form
+    method="post"
+    action="{% url 'comment' project.pk %}">
+
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+
+    <button type="submit">
+        Comment
+    </button>
+
+</form>
+
+
+<hr>
+
+<h3>Rate Project</h3>
+
+<form
+    method="post"
+    action="{% url 'rate' project.pk %}">
+
+    {% csrf_token %}
+    {{ rating_form.as_p }}
+
+    <button type="submit">
+        Rate
+    </button>
+
+</form>
+
+
+<hr>
+
+<h3>Report Project</h3>
+
+<form
+    method="post"
+    action="{% url 'report' project.pk %}">
+
+    {% csrf_token %}
+    {{ report_form.as_p }}
+
+    <button type="submit">
+        Report Project
+    </button>
+
+</form>
+
+
+{% if user == project.creator %}
+
+<br>
+
+<a
+    href="{% url 'cancel' project.pk %}">
+    Cancel Project
+</a>
+
+{% endif %}
+
+{% endif %}
+
+
+<hr>
+
+<h2>Comments</h2>
+
+{% for c in project.comments.all %}
+
+<div
+    style="
+        border:1px solid #ccc;
+        padding:10px;
+        margin-bottom:10px;
+    ">
+
+    <strong>
+        {{ c.user.first_name }}
+    </strong>
+
+    <p>
+        {{ c.text }}
+    </p>
+
+    {% if user.is_authenticated %}
+
+    <form
+        method="post"
+        action="{% url 'report_comment' c.pk %}">
+
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="reason"
+            placeholder="Reason for reporting"
+            required
+        >
+
+        <button type="submit">
+            Report Comment
+        </button>
+
+    </form>
+
+    {% endif %}
+
+</div>
+
+{% empty %}
+
+<p>No comments yet.</p>
+
+{% endfor %}
+
+
+<hr>
+
+<h2>Similar Projects</h2>
+
+<div class="grid">
+
+{% for similar in similar_projects %}
+
+<div
+    style="
+        border:1px solid #ccc;
+        padding:15px;
+        margin-bottom:10px;
+    ">
+
+    <h3>
+        {{ similar.title }}
+    </h3>
+
+    <p>
+        {{ similar.details|truncatechars:100 }}
+    </p>
+
+    <a
+        href="{% url 'project_detail' similar.pk %}">
+        View Project
+    </a>
+
+</div>
+
+{% empty %}
+
+<p>No similar projects available.</p>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

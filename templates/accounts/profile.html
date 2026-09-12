@@ -1,15 +1,77 @@
-{% extends "base.html" %}{% block title %}My Profile{% endblock %}{% block content %}
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
 <h1>My Profile</h1>
-{% if user_obj.profile_picture %}<img class="avatar" src="{{ user_obj.profile_picture.url }}" alt="Profile">{% endif %}
+
+{% if user_obj.profile_picture %}
+    <img
+        src="{{ user_obj.profile_picture.url }}"
+        alt="Profile Picture"
+        style="width:120px; height:120px; object-fit:cover; border-radius:50%;"
+    >
+{% endif %}
+
 <h2>{{ user_obj.first_name }} {{ user_obj.last_name }}</h2>
+
 <p><strong>Email:</strong> {{ user_obj.email }}</p>
 <p><strong>Mobile:</strong> {{ user_obj.mobile }}</p>
 <p><strong>Birthdate:</strong> {{ user_obj.birthdate|default:"Not provided" }}</p>
 <p><strong>Country:</strong> {{ user_obj.country|default:"Not provided" }}</p>
 <p><strong>Facebook:</strong> {{ user_obj.facebook_profile|default:"Not provided" }}</p>
+
 <hr>
-<h3>My Projects</h3><p class="muted">Projects will appear here when the Projects module is connected.</p>
-<h3>My Donations</h3><p class="muted">Donations will appear here when the Donations module is connected.</p>
-<a class="btn" href="{% url 'profile_edit' %}">Edit Profile</a>
-<a class="btn danger" href="{% url 'delete_account' %}">Delete Account</a>
+
+<h2>My Projects</h2>
+
+{% for project in my_projects %}
+    <div class="card">
+        <h3>{{ project.title }}</h3>
+
+        <p>Target: {{ project.target }} EGP</p>
+
+        <a href="{% url 'project_detail' project.pk %}">
+            View Project
+        </a>
+    </div>
+
+{% empty %}
+    <p>No projects yet.</p>
+{% endfor %}
+
+<hr>
+
+<h2>My Donations</h2>
+
+{% for donation in my_donations %}
+    <div class="card">
+
+        <h3>{{ donation.project.title }}</h3>
+
+        <p>Amount: {{ donation.amount }} EGP</p>
+
+        <a href="{% url 'project_detail' donation.project.pk %}">
+            View Project
+        </a>
+
+    </div>
+
+{% empty %}
+    <p>No donations yet.</p>
+{% endfor %}
+
+<hr>
+
+<a href="{% url 'profile_edit' %}">
+    Edit Profile
+</a>
+
+<br><br>
+
+<a href="{% url 'delete_account' %}">
+    Delete Account
+</a>
+
 {% endblock %}

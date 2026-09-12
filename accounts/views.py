@@ -1,87 +1,225 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+
+from projects.models import Donation
+
 from .forms import RegisterForm, LoginForm, ProfileForm
 from .models import User
 from .tokens import make_activation_token, get_user_from_activation_token
 
+
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("profile")
-    form = RegisterForm(request.POST or None, request.FILES or None)
+
+    form = RegisterForm(
+        request.POST or None,
+        request.FILES or None
+    )
+
     if request.method == "POST" and form.is_valid():
         user = form.save(commit=False)
+
         user.is_active = False
-        user.set_password(form.cleaned_data["password"])
+        user.set_password(
+            form.cleaned_data["password"]
+        )
         user.save()
 
         token = make_activation_token(user)
-        activation_url = request.build_absolute_uri(reverse("activate", args=[token]))
+
+        activation_url = request.build_absolute_uri(
+            reverse(
+                "activate",
+                args=[token]
+            )
+        )
+
         send_mail(
             "Activate your Crowd-Funding account",
-            f"Welcome {user.first_name}! Activate your account within 24 hours:\n{activation_url}",
+            f"Welcome {user.first_name}! "
+            f"Activate your account within 24 hours:\n"
+            f"{activation_url}",
             None,
             [user.email],
         )
-        return render(request, "accounts/activation_sent.html", {"email": user.email})
-    return render(request, "accounts/register.html", {"form": form})
+
+        return render(
+            request,
+            "accounts/activation_sent.html",
+            {
+                "email": user.email
+            }
+        )
+
+    return render(
+        request,
+        "accounts/register.html",
+        {
+            "form": form
+        }
+    )
+
 
 def activate_view(request, token):
     user_id = get_user_from_activation_token(token)
+
     if not user_id:
-        return render(request, "accounts/activation_invalid.html")
-    user = get_object_or_404(User, pk=user_id)
+        return render(
+            request,
+            "accounts/activation_invalid.html"
+        )
+
+    user = get_object_or_404(
+        User,
+        pk=user_id
+    )
+
     user.is_active = True
-    user.save(update_fields=["is_active"])
-    messages.success(request, "Account activated successfully. You can now login.")
+    user.save(
+        update_fields=["is_active"]
+    )
+
+    messages.success(
+        request,
+        "Account activated successfully. You can now login."
+    )
+
     return redirect("login")
+
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("profile")
-    form = LoginForm(request, data=request.POST or None)
+
+    form = LoginForm(
+        request,
+        data=request.POST or None
+    )
+
     if request.method == "POST" and form.is_valid():
         user = form.get_user()
+
         if not user.is_active:
-            form.add_error(None, "Please activate your account from the email first.")
+            form.add_error(
+                None,
+                "Please activate your account from the email first."
+            )
+
         else:
-            login(request, user)
+            login(
+                request,
+                user
+            )
+
             return redirect("profile")
-    return render(request, "accounts/login.html", {"form": form})
+
+    return render(
+        request,
+        "accounts/login.html",
+        {
+            "form": form
+        }
+    )
+
 
 def logout_view(request):
     logout(request)
+
     return redirect("login")
+
 
 @login_required
 def profile_view(request):
-    return render(request, "accounts/profile.html", {"user_obj": request.user})
+
+    my_projects = (
+        request.user.projects
+        .all()
+        .order_by("-created_at")
+    )
+
+    my_donations = (
+        Donation.objects
+        .filter(user=request.user)
+        .select_related("project")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "user_obj": request.user,
+            "my_projects": my_projects,
+            "my_donations": my_donations,
+        }
+    )
+
 
 @login_required
 def profile_edit_view(request):
-    form = ProfileForm(request.POST or None, request.FILES or None, instance=request.user)
+
+    form = ProfileForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=request.user
+    )
+
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Profile updated successfully.")
+
+        messages.success(
+            request,
+            "Profile updated successfully."
+        )
+
         return redirect("profile")
-    return render(request, "accounts/profile_edit.html", {"form": form})
+
+    return render(
+        request,
+        "accounts/profile_edit.html",
+        {
+            "form": form
+        }
+    )
+
 
 @login_required
 def delete_account_view(request):
+
     if request.method == "POST":
-        password = request.POST.get("password", "")
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
         if not request.user.check_password(password):
-            messages.error(request, "Incorrect password.")
+
+            messages.error(
+                request,
+                "Incorrect password."
+            )
+
         else:
             user = request.user
+
             logout(request)
+
             user.delete()
+
             return redirect("register")
-    return render(request, "accounts/delete_account.html")
+
+    return render(
+        request,
+        "accounts/delete_account.html"
+    )
+
 
 password_reset = PasswordResetView.as_view(
     template_name="accounts/password_reset.html",
