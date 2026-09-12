@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ category.name }}</h1>
+
+<h2>Projects</h2>
+
+<div class="grid">
+
+    {% for project in projects %}
+
+        <div class="card">
+
+            <h3>{{ project.title }}</h3>
+
+            <p>
+                {{ project.details|truncatechars:120 }}
+            </p>
+
+            <p>
+                Target:
+                {{ project.target }} EGP
+            </p>
+
+            <p>
+                Rating:
+                {{ project.rating|floatformat:1 }}/5
+            </p>
+
+            <a class="btn"
+               href="{% url 'project_detail' project.pk %}">
+                View Project
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p>No projects in this category.</p>
+
+    {% endfor %}
+
+</div>
+
+<br>
+
+<a class="btn" href="{% url 'home' %}">
+    Back to Home
+</a>
+
+{% endblock %}

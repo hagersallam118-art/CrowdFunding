@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Crowd-Funding</h1>
+
+<form method="GET">
+    <input
+        type="text"
+        name="q"
+        value="{{ query }}"
+        placeholder="Search by project title or tag"
+    >
+    <button type="submit">Search</button>
+</form>
+
+{% if query %}
+    <h2>Search Results</h2>
+
+    <div class="grid">
+        {% for project in search_results %}
+            <div class="card">
+                <h3>{{ project.title }}</h3>
+                <p>{{ project.details|truncatechars:100 }}</p>
+
+                <a class="btn"
+                   href="{% url 'project_detail' project.pk %}">
+                    View Project
+                </a>
+            </div>
+        {% empty %}
+            <p>No projects found.</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<h2>Top 5 Rated Running Projects</h2>
+
+<div class="grid">
+    {% for project in top_projects %}
+        <div class="card">
+            <h3>{{ project.title }}</h3>
+
+            <p>
+                Rating:
+                {{ project.rating|floatformat:1 }}/5
+            </p>
+
+            <p>
+                Target:
+                {{ project.target }} EGP
+            </p>
+
+            <a class="btn"
+               href="{% url 'project_detail' project.pk %}">
+                View Project
+            </a>
+        </div>
+    {% empty %}
+        <p>No running projects.</p>
+    {% endfor %}
+</div>
+
+
+<h2>Latest 5 Projects</h2>
+
+<div class="grid">
+    {% for project in latest_projects %}
+        <div class="card">
+            <h3>{{ project.title }}</h3>
+
+            <p>{{ project.details|truncatechars:100 }}</p>
+
+            <p>
+                Target:
+                {{ project.target }} EGP
+            </p>
+
+            <a class="btn"
+               href="{% url 'project_detail' project.pk %}">
+                View Project
+            </a>
+        </div>
+    {% empty %}
+        <p>No projects available.</p>
+    {% endfor %}
+</div>
+
+
+<h2>Latest 5 Featured Projects</h2>
+
+<div class="grid">
+    {% for project in featured_projects %}
+        <div class="card">
+            <h3>{{ project.title }}</h3>
+
+            <p>
+                Rating:
+                {{ project.rating|floatformat:1 }}/5
+            </p>
+
+            <a class="btn"
+               href="{% url 'project_detail' project.pk %}">
+                View Project
+            </a>
+        </div>
+    {% empty %}
+        <p>No featured projects.</p>
+    {% endfor %}
+</div>
+
+
+<h2>Categories</h2>
+
+<div class="grid">
+    {% for category in categories %}
+        <div class="card">
+            <a href="{% url 'category_detail' category.id %}">
+                {{ category.name }}
+            </a>
+        </div>
+    {% empty %}
+        <p>No categories available.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
