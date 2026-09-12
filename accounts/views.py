@@ -145,7 +145,7 @@ def profile_view(request):
 
     my_donations = (
         Donation.objects
-        .filter(user=request.user)
+        .filter(donor=request.user)
         .select_related("project")
         .order_by("-created_at")
     )

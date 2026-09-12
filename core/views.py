@@ -21,7 +21,7 @@ def home(request):
         .filter(
             start_time__lte=now,
             end_time__gte=now,
-            cancelled=False
+            is_cancelled=False
         )
         .annotate(avg_rating=Avg('ratings__value'))
         .order_by('-avg_rating')[:5]

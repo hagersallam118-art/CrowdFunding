@@ -1,256 +1,897 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>{{ project.title }}</title>
-</head>
+{% block content %}
 
-<body>
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <h1>{{ project.title }}</h1>
+    .project-page {
+        max-width: 1180px;
+        margin: 35px auto 70px;
+        padding: 0 22px;
+        font-family: Arial, sans-serif;
+        color: #1f2937;
+    }
 
-    <p><strong>Details:</strong></p>
-    <p>{{ project.details }}</p>
+    .back-link {
+        display: inline-block;
+        margin-bottom: 22px;
+        color: #15803d;
+        text-decoration: none;
+        font-weight: 700;
+    }
 
-    <p>
-        <strong>Category:</strong>
-        {{ project.category }}
-    </p>
+    .back-link:hover {
+        text-decoration: underline;
+    }
 
-    <p>
-        <strong>Target:</strong>
-        {{ project.target }} EGP
-    </p>
+    .project-layout {
+        display: grid;
+        grid-template-columns: 1.65fr 0.8fr;
+        gap: 35px;
+        align-items: start;
+    }
 
-    <p>
-        <strong>Total Donations:</strong>
-        {{ total_donations }} EGP
-    </p>
+    .main-card,
+    .side-card,
+    .section-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    }
 
-    <p>
-        <strong>Progress:</strong>
-        {{ progress|floatformat:2 }}%
-    </p>
+    .main-card {
+        overflow: hidden;
+    }
 
-    <p>
-        <strong>Start:</strong>
-        {{ project.start_time }}
-    </p>
+    .image-area {
+        position: relative;
+        background: #f3f4f6;
+        min-height: 360px;
+    }
 
-    <p>
-        <strong>End:</strong>
-        {{ project.end_time }}
-    </p>
+    .image-slider {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+    }
 
-    <p><strong>Tags:</strong></p>
+    .image-slider::-webkit-scrollbar {
+        display: none;
+    }
 
-    <ul>
-        {% for tag in project.tags.all %}
-        <li>{{ tag.name }}</li>
-        {% empty %}
-        <li>No tags</li>
-        {% endfor %}
-    </ul>
+    .project-image {
+        width: 100%;
+        height: 430px;
+        object-fit: cover;
+        flex: 0 0 100%;
+    }
 
-    <hr>
+    .no-image {
+        height: 430px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #6b7280;
+        font-size: 18px;
+    }
 
-    <h2>Project Images</h2>
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.92);
+        font-size: 25px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        z-index: 5;
+    }
 
-    <div id="slider">
+    .slider-btn:hover {
+        background: white;
+    }
 
-        {% for image in project.images.all %}
-        <img class="slide" src="{{ image.image.url }}" width="400" height="300"
-            style="object-fit: cover; display: none;">
-        {% empty %}
-        <p>No images available.</p>
-        {% endfor %}
+    .slider-left {
+        left: 15px;
+    }
+
+    .slider-right {
+        right: 15px;
+    }
+
+    .project-content {
+        padding: 30px;
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 7px 13px;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: #15803d;
+        font-weight: bold;
+        font-size: 13px;
+        margin-bottom: 13px;
+    }
+
+    .project-title {
+        font-size: 34px;
+        line-height: 1.15;
+        margin: 0 0 15px;
+        color: #111827;
+    }
+
+    .project-description {
+        color: #6b7280;
+        line-height: 1.8;
+        font-size: 16px;
+        white-space: pre-line;
+    }
+
+    .creator-line {
+        margin-top: 22px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 18px;
+        color: #4b5563;
+    }
+
+    .side-card {
+        padding: 25px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .money-raised {
+        font-size: 30px;
+        font-weight: 800;
+        color: #15803d;
+        margin-bottom: 4px;
+    }
+
+    .target-text {
+        color: #6b7280;
+        margin-bottom: 16px;
+    }
+
+    .progress-bg {
+        background: #e5e7eb;
+        height: 12px;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 15px 0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #16a34a;
+        border-radius: 20px;
+        max-width: 100%;
+    }
+
+    .stats-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin: 18px 0 25px;
+    }
+
+    .stat {
+        flex: 1;
+        background: #f9fafb;
+        border-radius: 14px;
+        padding: 14px 10px;
+        text-align: center;
+    }
+
+    .stat strong {
+        display: block;
+        color: #111827;
+        font-size: 18px;
+    }
+
+    .stat span {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .action-btn {
+        width: 100%;
+        display: block;
+        padding: 14px 18px;
+        border: none;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-top: 10px;
+    }
+
+    .green-btn {
+        background: #16a34a;
+        color: white;
+    }
+
+    .green-btn:hover {
+        background: #15803d;
+    }
+
+    .outline-btn {
+        background: white;
+        color: #15803d;
+        border: 1px solid #16a34a;
+    }
+
+    .danger-btn {
+        background: #fff1f2;
+        color: #be123c;
+        border: 1px solid #fecdd3;
+    }
+
+    .section-card {
+        padding: 28px;
+        margin-top: 30px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin: 0 0 22px;
+        color: #111827;
+    }
+
+    .form-box p {
+        margin-bottom: 15px;
+    }
+
+    .form-box label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-box input,
+    .form-box textarea,
+    .form-box select {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .form-box textarea {
+        resize: vertical;
+    }
+
+    .form-box input:focus,
+    .form-box textarea:focus,
+    .form-box select:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22,163,74,0.10);
+    }
+
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    .rating-number {
+        font-size: 32px;
+        font-weight: 800;
+        color: #f59e0b;
+        margin-bottom: 5px;
+    }
+
+    .stars {
+        color: #f59e0b;
+        font-size: 20px;
+        margin-bottom: 18px;
+    }
+
+    .comment {
+        border: 1px solid #e5e7eb;
+        border-radius: 15px;
+        padding: 18px;
+        margin-bottom: 15px;
+        background: #fafafa;
+    }
+
+    .comment-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .comment-user {
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .comment-date {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .comment-text {
+        line-height: 1.6;
+        color: #4b5563;
+    }
+
+    .small-form {
+        margin-top: 13px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .small-form input {
+        flex: 1;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    .small-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .report-small {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .reply {
+        margin: 12px 0 0 25px;
+        padding: 12px;
+        border-left: 3px solid #16a34a;
+        background: white;
+        border-radius: 5px;
+    }
+
+    .similar-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+
+    .similar-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+        background: white;
+        transition: 0.2s;
+    }
+
+    .similar-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    }
+
+    .similar-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        background: #f3f4f6;
+    }
+
+    .similar-info {
+        padding: 15px;
+    }
+
+    .similar-info h3 {
+        font-size: 16px;
+        margin: 0 0 8px;
+    }
+
+    .similar-info p {
+        font-size: 13px;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+
+    .similar-link {
+        color: #15803d;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+    .login-message {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 15px;
+        color: #166534;
+    }
+
+    @media (max-width: 900px) {
+        .project-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .side-card {
+            position: static;
+        }
+
+        .two-columns {
+            grid-template-columns: 1fr;
+        }
+
+        .similar-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .project-image,
+        .no-image {
+            height: 330px;
+        }
+    }
+
+    @media (max-width: 550px) {
+        .project-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .project-content {
+            padding: 20px;
+        }
+
+        .project-title {
+            font-size: 27px;
+        }
+
+        .similar-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .project-image,
+        .no-image {
+            height: 260px;
+        }
+
+        .stats-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+
+<div class="project-page">
+
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <div class="project-layout">
+
+        <!-- LEFT SIDE -->
+        <div class="main-card">
+
+            <div class="image-area">
+
+                {% if project.images.all %}
+
+                <button type="button"
+                        class="slider-btn slider-left"
+                        onclick="document.getElementById('projectSlider').scrollBy({left:-700, behavior:'smooth'})">
+                    ‹
+                </button>
+
+                <div class="image-slider" id="projectSlider">
+
+                    {% for image in project.images.all %}
+                    <img
+                        class="project-image"
+                        src="{{ image.image.url }}"
+                        alt="{{ project.title }}"
+                    >
+                    {% endfor %}
+
+                </div>
+
+                <button type="button"
+                        class="slider-btn slider-right"
+                        onclick="document.getElementById('projectSlider').scrollBy({left:700, behavior:'smooth'})">
+                    ›
+                </button>
+
+                {% else %}
+
+                <div class="no-image">
+                    No project images available
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="project-content">
+
+                <span class="category-badge">
+                    {{ project.category }}
+                </span>
+
+                <h1 class="project-title">
+                    {{ project.title }}
+                </h1>
+
+                <div class="project-description">
+                    {{ project.details }}
+                </div>
+
+                <div class="creator-line">
+                    Created by
+                    <strong>
+                        {{ project.creator.first_name }}
+                        {{ project.creator.last_name }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <aside class="side-card">
+
+            <div class="money-raised">
+                {{ total_donations|floatformat:0 }} EGP
+            </div>
+
+            <div class="target-text">
+                raised of {{ project.target|floatformat:0 }} EGP goal
+            </div>
+
+            <div class="progress-bg">
+                <div
+                    class="progress-fill"
+                    style="width: {{ progress }}%;">
+                </div>
+            </div>
+
+            <div class="stats-row">
+
+                <div class="stat">
+                    <strong>
+                        {{ progress|floatformat:0 }}%
+                    </strong>
+                    <span>Funded</span>
+                </div>
+
+                <div class="stat">
+                    <strong>
+                        {{ average_rating|floatformat:1 }}
+                    </strong>
+                    <span>Rating</span>
+                </div>
+
+            </div>
+
+            {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'donate' project.pk %}"
+                    class="action-btn green-btn">
+                    Donate Now
+                </a>
+
+            {% else %}
+
+                <div class="login-message">
+                    Login to donate, comment and rate this project.
+                </div>
+
+            {% endif %}
+
+            {% if user == project.creator %}
+
+                <a
+                    href="{% url 'cancel_project' project.pk %}"
+                    class="action-btn danger-btn"
+                    onclick="return confirm('Are you sure you want to cancel this project?');">
+                    Cancel Project
+                </a>
+
+            {% endif %}
+
+        </aside>
 
     </div>
 
-    {% if project.images.all %}
-    <button onclick="previousSlide()">Previous</button>
-    <button onclick="nextSlide()">Next</button>
-    {% endif %}
 
-    <script>
-        let currentSlide = 0;
-
-        const slides = document.querySelectorAll(".slide");
-
-        function showSlide(index) {
-            slides.forEach(function (slide) {
-                slide.style.display = "none";
-            });
-
-            if (slides.length > 0) {
-                slides[index].style.display = "block";
-            }
-        }
-
-        function nextSlide() {
-            currentSlide++;
-
-            if (currentSlide >= slides.length) {
-                currentSlide = 0;
-            }
-
-            showSlide(currentSlide);
-        }
-
-        function previousSlide() {
-            currentSlide--;
-
-            if (currentSlide < 0) {
-                currentSlide = slides.length - 1;
-            }
-
-            showSlide(currentSlide);
-        }
-
-        showSlide(currentSlide);
-    </script>
-
-
-    {% if user == project.creator and not project.is_cancelled %}
-    <form method="POST" action="{% url 'cancel_project' project.pk %}">
-        {% csrf_token %}
-        <button type="submit">
-            Cancel Project
-        </button>
-    </form>
-    {% endif %}
-
-    <hr>
-
-    <h2>Comments</h2>
-
+    <!-- RATING + REPORT -->
     {% if user.is_authenticated %}
-    <form method="POST" action="{% url 'add_comment' project.pk %}">
-        {% csrf_token %}
 
-        {{ comment_form.as_p }}
+    <div class="section-card">
 
-        <button type="submit">Add Comment</button>
-    </form>
-    {% else %}
-    <p>Please login to add a comment.</p>
+        <div class="two-columns">
+
+            <div>
+
+                <h2 class="section-title">
+                    Rate This Project
+                </h2>
+
+                <div class="rating-number">
+                    {{ average_rating|floatformat:1 }} / 5
+                </div>
+
+                <div class="stars">
+                    ★ ★ ★ ★ ★
+                </div>
+
+                <form
+                    method="post"
+                    action="{% url 'add_rating' project.pk %}"
+                    class="form-box">
+
+                    {% csrf_token %}
+
+                    {{ rating_form.as_p }}
+
+                    <button
+                        type="submit"
+                        class="action-btn green-btn">
+                        Submit Rating
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div>
+
+                <h2 class="section-title">
+                    Report Project
+                </h2>
+
+                <p style="color:#6b7280;">
+                    If you believe this project contains inappropriate
+                    or misleading content, you can report it.
+                </p>
+
+                <form
+                    method="post"
+                    action="{% url 'report_project' project.pk %}"
+                    class="form-box">
+
+                    {% csrf_token %}
+
+                    {{ report_form.as_p }}
+
+                    <button
+                        type="submit"
+                        class="action-btn danger-btn">
+                        Report Project
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
     {% endif %}
 
-    <hr>
 
-    {% for comment in comments %}
-    <div>
-        <strong>{{ comment.user.username }}</strong>
-        <small>{{ comment.created_at }}</small>
+    <!-- COMMENTS -->
+    <div class="section-card">
 
-        <p>{{ comment.content }}</p>
+        <h2 class="section-title">
+            Comments
+        </h2>
+
         {% if user.is_authenticated %}
-        <form method="POST" action="{% url 'add_reply' project.pk comment.pk %}">
+
+        <form
+            method="post"
+            action="{% url 'add_comment' project.pk %}"
+            class="form-box"
+            style="margin-bottom:30px;">
+
             {% csrf_token %}
-            <textarea name="content" rows="2" placeholder="Write a reply..." required></textarea>
-            <br>
-            <button type="submit">Reply</button>
-            {% if user.is_authenticated %}
-            <form method="POST" action="{% url 'report_comment' project.pk comment.pk %}">
-                {% csrf_token %}
-                {{ report_form.as_p }}
-                <button type="submit">Report Comment</button>
-            </form>
-            {% endif %}
+
+            {{ comment_form.as_p }}
+
+            <button
+                type="submit"
+                class="action-btn green-btn">
+                Add Comment
+            </button>
+
         </form>
+
         {% endif %}
 
-        {% for reply in comment.replies.all %}
-        <div style="margin-left: 30px;">
-            <strong>{{ reply.user.username }}</strong>
-            <p>{{ reply.content }}</p>
+
+        {% for c in comments %}
+
+        <div class="comment">
+
+            <div class="comment-head">
+
+                <span class="comment-user">
+                    {{ c.user.first_name }}
+                    {{ c.user.last_name }}
+                </span>
+
+                <span class="comment-date">
+                    {{ c.created_at|date:"M d, Y - H:i" }}
+                </span>
+
+            </div>
+
+            <div class="comment-text">
+                {{ c.content }}
+            </div>
+
+
+            {% if user.is_authenticated %}
+
+            <form
+                class="small-form"
+                method="post"
+                action="{% url 'report_comment' project.pk c.pk %}">
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="reason"
+                    placeholder="Reason for reporting..."
+                    required>
+
+                <button
+                    class="small-btn report-small"
+                    type="submit">
+                    Report
+                </button>
+
+            </form>
+
+
+            <form
+                method="post"
+                action="{% url 'add_reply' project.pk c.pk %}"
+                class="form-box"
+                style="margin-top:15px;">
+
+                {% csrf_token %}
+
+                {{ comment_form.as_p }}
+
+                <button
+                    type="submit"
+                    class="outline-btn small-btn">
+                    Reply
+                </button>
+
+            </form>
+
+            {% endif %}
+
+
+            {% for reply in c.replies.all %}
+
+            <div class="reply">
+
+                <strong>
+                    {{ reply.user.first_name }}
+                    {{ reply.user.last_name }}
+                </strong>
+
+                <div style="margin-top:6px; color:#4b5563;">
+                    {{ reply.content }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
         </div>
+
+        {% empty %}
+
+        <p style="color:#6b7280;">
+            No comments yet. Be the first to comment.
+        </p>
+
         {% endfor %}
+
     </div>
 
-    <hr>
-    {% empty %}
-    <p>No comments yet.</p>
-    {% endfor %}
 
-    <hr>
+    <!-- SIMILAR PROJECTS -->
+    <div class="section-card">
 
+        <h2 class="section-title">
+            Similar Projects
+        </h2>
 
+        <div class="similar-grid">
 
-    <h2>Project Rating</h2>
+            {% for similar in similar_projects %}
 
-    <p>
-        Average Rating:
-        {{ average_rating|floatformat:1 }} / 5
-    </p>
+            <div class="similar-card">
 
-    {% if user.is_authenticated %}
-    <form method="POST" action="{% url 'add_rating' project.pk %}">
-        {% csrf_token %}
+                {% with first_image=similar.images.first %}
 
-        {{ rating_form.as_p }}
+                    {% if first_image %}
 
-        <button type="submit">Rate Project</button>
-    </form>
-    {% else %}
-    <p>Please login to rate this project.</p>
-    {% endif %}
+                    <img
+                        class="similar-image"
+                        src="{{ first_image.image.url }}"
+                        alt="{{ similar.title }}">
 
-    <hr>
+                    {% else %}
 
-    <h2>Report Project</h2>
+                    <div
+                        class="similar-image"
+                        style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            color:#9ca3af;
+                        ">
+                        No Image
+                    </div>
 
-    {% if user.is_authenticated %}
+                    {% endif %}
 
-    <form method="POST" action="{% url 'report_project' project.pk %}">
-        {% csrf_token %}
+                {% endwith %}
 
-        {{ report_form.as_p }}
+                <div class="similar-info">
 
-        <button type="submit">Report Project</button>
-    </form>
+                    <h3>
+                        {{ similar.title }}
+                    </h3>
 
-    {% else %}
+                    <p>
+                        {{ similar.details|truncatechars:80 }}
+                    </p>
 
-    <p>Please login to report this project.</p>
+                    <a
+                        href="{% url 'project_detail' similar.pk %}"
+                        class="similar-link">
+                        View Project →
+                    </a>
 
-    {% endif %}
+                </div>
 
+            </div>
 
-    <hr>
+            {% empty %}
 
-    <h2>Similar Projects</h2>
+            <p style="color:#6b7280;">
+                No similar projects available.
+            </p>
 
-    {% for similar in similar_projects %}
-    <div>
-        <h3>
-            <a href="{% url 'project_detail' similar.pk %}">
-                {{ similar.title }}
-            </a>
-        </h3>
+            {% endfor %}
 
-        <p>{{ similar.details }}</p>
-        <p>Target: {{ similar.target }} EGP</p>
-        <p>Category: {{ similar.category.name }}</p>
+        </div>
+
     </div>
 
-    <hr>
-    {% empty %}
-    <p>No similar projects found.</p>
-    {% endfor %}
+</div>
 
-    <hr>
-
-    <a href="{% url 'donate' project.pk %}">
-        Donate to this Project
-    </a>
-
-    <br><br>
-
-    <a href="{% url 'project_list' %}">
-        Back to Projects
-    </a>
-
-</body>
-
-</html>
+{% endblock %}
