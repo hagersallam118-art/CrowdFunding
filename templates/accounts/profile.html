@@ -4,74 +4,443 @@
 
 {% block content %}
 
-<h1>My Profile</h1>
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-{% if user_obj.profile_picture %}
-    <img
-        src="{{ user_obj.profile_picture.url }}"
-        alt="Profile Picture"
-        style="width:120px; height:120px; object-fit:cover; border-radius:50%;"
-    >
-{% endif %}
+    .profile-page {
+        max-width: 1150px;
+        margin: 40px auto 70px;
+        padding: 0 20px;
+        font-family: Arial, sans-serif;
+        color: #1f2937;
+    }
 
-<h2>{{ user_obj.first_name }} {{ user_obj.last_name }}</h2>
+    .profile-header {
+        background: linear-gradient(135deg, #15803d, #22c55e);
+        border-radius: 24px;
+        padding: 35px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.10);
+        margin-bottom: 30px;
+    }
 
-<p><strong>Email:</strong> {{ user_obj.email }}</p>
-<p><strong>Mobile:</strong> {{ user_obj.mobile }}</p>
-<p><strong>Birthdate:</strong> {{ user_obj.birthdate|default:"Not provided" }}</p>
-<p><strong>Country:</strong> {{ user_obj.country|default:"Not provided" }}</p>
-<p><strong>Facebook:</strong> {{ user_obj.facebook_profile|default:"Not provided" }}</p>
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 5px solid rgba(255,255,255,0.8);
+        background: white;
+    }
 
-<hr>
+    .profile-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        border: 5px solid rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        font-weight: bold;
+    }
 
-<h2>My Projects</h2>
+    .profile-header h1 {
+        margin: 0 0 7px;
+        font-size: 32px;
+    }
 
-{% for project in my_projects %}
-    <div class="card">
-        <h3>{{ project.title }}</h3>
+    .profile-header p {
+        margin: 4px 0;
+        opacity: 0.95;
+    }
 
-        <p>Target: {{ project.target }} EGP</p>
+    .profile-actions {
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 
-        <a href="{% url 'project_detail' project.pk %}">
-            View Project
-        </a>
+    .profile-btn {
+        display: inline-block;
+        padding: 11px 18px;
+        border-radius: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .edit-btn {
+        background: white;
+        color: #15803d;
+    }
+
+    .delete-btn {
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.5);
+        color: white;
+    }
+
+    .info-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        margin: 0 0 22px;
+        font-size: 24px;
+        color: #111827;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .info-item {
+        background: #f9fafb;
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .info-label {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #111827;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .project-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 17px;
+        overflow: hidden;
+        background: white;
+        transition: 0.2s;
+    }
+
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .project-image {
+        height: 170px;
+        width: 100%;
+        object-fit: cover;
+        background: #f3f4f6;
+    }
+
+    .no-image {
+        height: 170px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: #9ca3af;
+    }
+
+    .card-content {
+        padding: 18px;
+    }
+
+    .card-content h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .card-content p {
+        color: #6b7280;
+        margin: 7px 0;
+    }
+
+    .view-link {
+        display: inline-block;
+        margin-top: 10px;
+        color: #15803d;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .donation-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+        background: #f9fafb;
+    }
+
+    .donation-amount {
+        color: #15803d;
+        font-size: 23px;
+        font-weight: 800;
+        margin: 10px 0;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 35px;
+        background: #f9fafb;
+        color: #6b7280;
+        border-radius: 15px;
+        grid-column: 1 / -1;
+    }
+
+    @media (max-width: 850px) {
+        .cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-actions {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .cards-grid,
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-header {
+            padding: 25px 18px;
+        }
+
+        .profile-header h1 {
+            font-size: 26px;
+        }
+    }
+</style>
+
+
+<div class="profile-page">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+
+        {% if user_obj.profile_picture %}
+            <img
+                class="profile-picture"
+                src="{{ user_obj.profile_picture.url }}"
+                alt="Profile Picture">
+        {% else %}
+            <div class="profile-placeholder">
+                {{ user_obj.first_name|first|upper }}
+            </div>
+        {% endif %}
+
+        <div>
+            <h1>
+                {{ user_obj.first_name }}
+                {{ user_obj.last_name }}
+            </h1>
+
+            <p>{{ user_obj.email }}</p>
+
+            {% if user_obj.country %}
+                <p>{{ user_obj.country }}</p>
+            {% endif %}
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'profile_edit' %}" class="profile-btn edit-btn">
+                Edit Profile
+            </a>
+
+            <a href="{% url 'delete_account' %}" class="profile-btn delete-btn">
+                Delete Account
+            </a>
+        </div>
+
     </div>
 
-{% empty %}
-    <p>No projects yet.</p>
-{% endfor %}
 
-<hr>
+    <!-- PERSONAL INFO -->
+    <div class="info-card">
 
-<h2>My Donations</h2>
+        <h2 class="section-title">
+            Personal Information
+        </h2>
 
-{% for donation in my_donations %}
-    <div class="card">
+        <div class="info-grid">
 
-        <h3>{{ donation.project.title }}</h3>
+            <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value">
+                    {{ user_obj.email }}
+                </div>
+            </div>
 
-        <p>Amount: {{ donation.amount }} EGP</p>
+            <div class="info-item">
+                <div class="info-label">Mobile</div>
+                <div class="info-value">
+                    {{ user_obj.mobile|default:"Not provided" }}
+                </div>
+            </div>
 
-        <a href="{% url 'project_detail' donation.project.pk %}">
-            View Project
-        </a>
+            <div class="info-item">
+                <div class="info-label">Birthdate</div>
+                <div class="info-value">
+                    {{ user_obj.birthdate|default:"Not provided" }}
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Country</div>
+                <div class="info-value">
+                    {{ user_obj.country|default:"Not provided" }}
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Facebook</div>
+                <div class="info-value">
+                    {{ user_obj.facebook_profile|default:"Not provided" }}
+                </div>
+            </div>
+
+        </div>
 
     </div>
 
-{% empty %}
-    <p>No donations yet.</p>
-{% endfor %}
 
-<hr>
+    <!-- MY PROJECTS -->
+    <div class="info-card">
 
-<a href="{% url 'profile_edit' %}">
-    Edit Profile
-</a>
+        <h2 class="section-title">
+            My Projects
+        </h2>
 
-<br><br>
+        <div class="cards-grid">
 
-<a href="{% url 'delete_account' %}">
-    Delete Account
-</a>
+            {% for project in my_projects %}
+
+                <div class="project-card">
+
+                    {% with first_image=project.images.first %}
+
+                        {% if first_image %}
+                            <img
+                                src="{{ first_image.image.url }}"
+                                class="project-image"
+                                alt="{{ project.title }}">
+                        {% else %}
+                            <div class="no-image">
+                                No Image
+                            </div>
+                        {% endif %}
+
+                    {% endwith %}
+
+                    <div class="card-content">
+
+                        <h3>
+                            {{ project.title }}
+                        </h3>
+
+                        <p>
+                            Target:
+                            <strong>
+                                {{ project.target|floatformat:0 }} EGP
+                            </strong>
+                        </p>
+
+                        <a
+                            href="{% url 'project_detail' project.pk %}"
+                            class="view-link">
+                            View Project →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-box">
+                    You haven't created any projects yet.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- MY DONATIONS -->
+    <div class="info-card">
+
+        <h2 class="section-title">
+            My Donations
+        </h2>
+
+        <div class="cards-grid">
+
+            {% for donation in my_donations %}
+
+                <div class="donation-card">
+
+                    <h3>
+                        {{ donation.project.title }}
+                    </h3>
+
+                    <div class="donation-amount">
+                        {{ donation.amount|floatformat:0 }} EGP
+                    </div>
+
+                    <p style="color:#6b7280;">
+                        Donation
+                    </p>
+
+                    <a
+                        href="{% url 'project_detail' donation.project.pk %}"
+                        class="view-link">
+                        View Project →
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-box">
+                    You haven't made any donations yet.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

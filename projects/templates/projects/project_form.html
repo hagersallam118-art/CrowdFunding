@@ -1,28 +1,354 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Project</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Create New Project</h1>
+{% block title %}Create Project{% endblock %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+{% block content %}
 
-    {{ form.as_p }}
+<style>
+    .create-page {
+        max-width: 900px;
+        margin: 45px auto 80px;
+        padding: 0 20px;
+    }
 
-    <label>Project Images:</label>
-    <input type="file" name="images" multiple>
+    .create-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-    <br><br>
+    .create-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 15px;
+        border-radius: 18px;
 
-    <button type="submit">Create Project</button>
-</form>
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-<br>
+        background: #dcfce7;
+        color: #15803d;
 
-<a href="{% url 'project_list' %}">Back to Projects</a>
+        font-size: 30px;
+        font-weight: bold;
+    }
 
-</body>
-</html>
+    .create-header h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 36px;
+    }
+
+    .create-header p {
+        margin-top: 10px;
+        color: #6b7280;
+        font-size: 16px;
+    }
+
+    .create-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+
+        padding: 35px;
+
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+    }
+
+    .form-section-title {
+        font-size: 20px;
+        color: #111827;
+        margin-bottom: 20px;
+
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .project-form p {
+        margin-bottom: 20px;
+    }
+
+    .project-form label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #374151;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .project-form input,
+    .project-form textarea,
+    .project-form select {
+        width: 100%;
+
+        padding: 13px 14px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 11px;
+
+        background: #fff;
+        color: #111827;
+
+        font-size: 15px;
+        font-family: inherit;
+
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .project-form textarea {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .project-form input:focus,
+    .project-form textarea:focus,
+    .project-form select:focus {
+        border-color: #16a34a;
+
+        box-shadow:
+            0 0 0 3px rgba(22, 163, 74, 0.10);
+    }
+
+    .project-form input[type="checkbox"] {
+        width: auto;
+    }
+
+    .helptext {
+        display: block;
+
+        color: #9ca3af;
+        font-size: 12px;
+
+        margin-top: 5px;
+    }
+
+    .errorlist {
+        list-style: none;
+
+        padding: 10px 12px;
+        margin-bottom: 8px;
+
+        border-radius: 10px;
+
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+
+        color: #be123c;
+        font-size: 13px;
+    }
+
+    .images-box {
+        margin-top: 25px;
+
+        padding: 22px;
+
+        border: 2px dashed #bbf7d0;
+        border-radius: 16px;
+
+        background: #f0fdf4;
+    }
+
+    .images-box h3 {
+        margin: 0 0 6px;
+
+        color: #166534;
+        font-size: 17px;
+    }
+
+    .images-box p {
+        margin: 0 0 15px;
+
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .images-box input[type="file"] {
+        width: 100%;
+
+        padding: 13px;
+
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+
+        background: white;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+
+        margin-top: 30px;
+    }
+
+    .create-project-btn {
+        flex: 1;
+
+        border: none;
+        border-radius: 12px;
+
+        padding: 15px;
+
+        background: #16a34a;
+        color: white;
+
+        font-size: 16px;
+        font-weight: 800;
+
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .create-project-btn:hover {
+        background: #15803d;
+        transform: translateY(-1px);
+    }
+
+    .cancel-btn {
+        padding: 15px 24px;
+
+        border-radius: 12px;
+
+        background: #f3f4f6;
+        color: #374151;
+
+        font-weight: 700;
+        text-decoration: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cancel-btn:hover {
+        background: #e5e7eb;
+    }
+
+    .tip-box {
+        margin-top: 25px;
+
+        padding: 17px 20px;
+
+        border-radius: 14px;
+
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+
+        color: #92400e;
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 650px) {
+
+        .create-card {
+            padding: 24px 18px;
+        }
+
+        .create-header h1 {
+            font-size: 29px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .cancel-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="create-page">
+
+    <div class="create-header">
+
+        <div class="create-icon">
+            +
+        </div>
+
+        <h1>
+            Create a Project
+        </h1>
+
+        <p>
+            Share your idea and start raising funds for your project.
+        </p>
+
+    </div>
+
+
+    <div class="create-card">
+
+        <h2 class="form-section-title">
+            Project Information
+        </h2>
+
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="project-form"
+        >
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+
+            <div class="images-box">
+
+                <h3>
+                    Project Images
+                </h3>
+
+                <p>
+                    You can select multiple images for your project.
+                </p>
+
+                <input
+                    type="file"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                >
+
+            </div>
+
+
+            <div class="tip-box">
+                <strong>Tip:</strong>
+                Add a clear title, detailed description and good project
+                images. This helps people understand and support your idea.
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="create-project-btn"
+                >
+                    Create Project
+                </button>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="cancel-btn"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
