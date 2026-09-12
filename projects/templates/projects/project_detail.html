@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ project.title }}</title>
+</head>
+
+<body>
+
+    <h1>{{ project.title }}</h1>
+
+    <p><strong>Details:</strong></p>
+    <p>{{ project.details }}</p>
+
+    <p>
+        <strong>Category:</strong>
+        {{ project.category }}
+    </p>
+
+    <p>
+        <strong>Target:</strong>
+        {{ project.target }} EGP
+    </p>
+
+    <p>
+        <strong>Total Donations:</strong>
+        {{ total_donations }} EGP
+    </p>
+
+    <p>
+        <strong>Progress:</strong>
+        {{ progress|floatformat:2 }}%
+    </p>
+
+    <p>
+        <strong>Start:</strong>
+        {{ project.start_time }}
+    </p>
+
+    <p>
+        <strong>End:</strong>
+        {{ project.end_time }}
+    </p>
+
+    <p><strong>Tags:</strong></p>
+
+    <ul>
+        {% for tag in project.tags.all %}
+        <li>{{ tag.name }}</li>
+        {% empty %}
+        <li>No tags</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h2>Project Images</h2>
+
+    <div id="slider">
+
+        {% for image in project.images.all %}
+        <img class="slide" src="{{ image.image.url }}" width="400" height="300"
+            style="object-fit: cover; display: none;">
+        {% empty %}
+        <p>No images available.</p>
+        {% endfor %}
+
+    </div>
+
+    {% if project.images.all %}
+    <button onclick="previousSlide()">Previous</button>
+    <button onclick="nextSlide()">Next</button>
+    {% endif %}
+
+    <script>
+        let currentSlide = 0;
+
+        const slides = document.querySelectorAll(".slide");
+
+        function showSlide(index) {
+            slides.forEach(function (slide) {
+                slide.style.display = "none";
+            });
+
+            if (slides.length > 0) {
+                slides[index].style.display = "block";
+            }
+        }
+
+        function nextSlide() {
+            currentSlide++;
+
+            if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            }
+
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide--;
+
+            if (currentSlide < 0) {
+                currentSlide = slides.length - 1;
+            }
+
+            showSlide(currentSlide);
+        }
+
+        showSlide(currentSlide);
+    </script>
+
+
+    {% if user == project.creator and not project.is_cancelled %}
+    <form method="POST" action="{% url 'cancel_project' project.pk %}">
+        {% csrf_token %}
+        <button type="submit">
+            Cancel Project
+        </button>
+    </form>
+    {% endif %}
+
+    <hr>
+
+    <h2>Comments</h2>
+
+    {% if user.is_authenticated %}
+    <form method="POST" action="{% url 'add_comment' project.pk %}">
+        {% csrf_token %}
+
+        {{ comment_form.as_p }}
+
+        <button type="submit">Add Comment</button>
+    </form>
+    {% else %}
+    <p>Please login to add a comment.</p>
+    {% endif %}
+
+    <hr>
+
+    {% for comment in comments %}
+    <div>
+        <strong>{{ comment.user.username }}</strong>
+        <small>{{ comment.created_at }}</small>
+
+        <p>{{ comment.content }}</p>
+        {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_reply' project.pk comment.pk %}">
+            {% csrf_token %}
+            <textarea name="content" rows="2" placeholder="Write a reply..." required></textarea>
+            <br>
+            <button type="submit">Reply</button>
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'report_comment' project.pk comment.pk %}">
+                {% csrf_token %}
+                {{ report_form.as_p }}
+                <button type="submit">Report Comment</button>
+            </form>
+            {% endif %}
+        </form>
+        {% endif %}
+
+        {% for reply in comment.replies.all %}
+        <div style="margin-left: 30px;">
+            <strong>{{ reply.user.username }}</strong>
+            <p>{{ reply.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <hr>
+    {% empty %}
+    <p>No comments yet.</p>
+    {% endfor %}
+
+    <hr>
+
+
+
+    <h2>Project Rating</h2>
+
+    <p>
+        Average Rating:
+        {{ average_rating|floatformat:1 }} / 5
+    </p>
+
+    {% if user.is_authenticated %}
+    <form method="POST" action="{% url 'add_rating' project.pk %}">
+        {% csrf_token %}
+
+        {{ rating_form.as_p }}
+
+        <button type="submit">Rate Project</button>
+    </form>
+    {% else %}
+    <p>Please login to rate this project.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Report Project</h2>
+
+    {% if user.is_authenticated %}
+
+    <form method="POST" action="{% url 'report_project' project.pk %}">
+        {% csrf_token %}
+
+        {{ report_form.as_p }}
+
+        <button type="submit">Report Project</button>
+    </form>
+
+    {% else %}
+
+    <p>Please login to report this project.</p>
+
+    {% endif %}
+
+
+    <hr>
+
+    <h2>Similar Projects</h2>
+
+    {% for similar in similar_projects %}
+    <div>
+        <h3>
+            <a href="{% url 'project_detail' similar.pk %}">
+                {{ similar.title }}
+            </a>
+        </h3>
+
+        <p>{{ similar.details }}</p>
+        <p>Target: {{ similar.target }} EGP</p>
+        <p>Category: {{ similar.category.name }}</p>
+    </div>
+
+    <hr>
+    {% empty %}
+    <p>No similar projects found.</p>
+    {% endfor %}
+
+    <hr>
+
+    <a href="{% url 'donate' project.pk %}">
+        Donate to this Project
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'project_list' %}">
+        Back to Projects
+    </a>
+
+</body>
+
+</html>

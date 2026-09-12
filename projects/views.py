@@ -1,274 +1,227 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
+from django.db.models import Avg
 
-from .forms import (
-    ProjectForm,
-    DonationForm,
-    CommentForm,
-    RatingForm,
-    ReportForm,
-)
-from .models import (
-    Project,
-    ProjectImage,
-    Donation,
-    Comment,
-    Rating,
-    Report,
-    Category,
-)
+from .forms import DonationForm, ProjectForm, CommentForm, RatingForm, ReportForm
+from .models import Project, ProjectImage, Comment, Rating, Report
 
 
-def home(request):
-    qs = Project.objects.filter(
-        cancelled=False,
-        start_time__lte=timezone.now(),
-        end_time__gte=timezone.now()
+def project_list(request):
+    projects = Project.objects.filter(is_cancelled=False).order_by("-created_at")
+
+    return render(
+        request,
+        "projects/project_list.html",
+        {"projects": projects}
     )
 
-    top = sorted(
-        qs,
-        key=lambda x: x.rating,
-        reverse=True
-    )[:5]
 
-    q = request.GET.get("q", "")
-
-    if q:
-        results = Project.objects.filter(
-            Q(title__icontains=q) |
-            Q(tags__name__icontains=q)
-        ).distinct()
-    else:
-        results = []
-
-    return render(request, "projects/home.html", {
-        "top": top,
-        "latest": Project.objects.order_by("-created_at")[:5],
-        "featured": Project.objects.filter(
-            featured=True
-        ).order_by("-created_at")[:5],
-        "categories": Category.objects.all(),
-        "results": results,
-        "q": q,
-    })
-
-
-def detail(request, pk):
+def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    tag_ids = project.tags.values_list(
-        "id",
-        flat=True
+    total_donations = sum(
+        donation.amount for donation in project.donations.all()
     )
 
-    if tag_ids:
-        similar_projects = (
-            Project.objects
-            .filter(
-                tags__id__in=tag_ids,
-                cancelled=False
-            )
-            .exclude(pk=project.pk)
-            .distinct()[:4]
-        )
+    if project.target > 0:
+        progress = (total_donations / project.target) * 100
     else:
-        similar_projects = Project.objects.none()
+        progress = 0
 
-    return render(request, "projects/detail.html", {
-        "project": project,
-        "donation_form": DonationForm(),
-        "comment_form": CommentForm(),
-        "rating_form": RatingForm(),
-        "report_form": ReportForm(),
-        "similar_projects": similar_projects,
-    })
+    comments = project.comments.filter(parent__isnull=True).order_by("-created_at")
+    average_rating = project.ratings.aggregate(
+         avg=Avg("value")
+        )["avg"] or 0
+    similar_projects = Project.objects.filter(
+         tags__in=project.tags.all(),
+         is_cancelled=False
+              ).exclude(
+         pk=project.pk
+             ).distinct()[:4]
 
+
+    return render(
+        request,
+        "projects/project_detail.html",
+        {
+            "project": project,
+            "total_donations": total_donations,
+            "progress": progress,
+            "comments": comments,
+            "comment_form": CommentForm(),
+            "average_rating": average_rating,
+            "rating_form": RatingForm(),
+            "report_form": ReportForm(),
+            "similar_projects": similar_projects,
+        }
+    )
 
 @login_required
-def create(request):
-    form = ProjectForm(
-        request.POST or None
+def add_comment(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.project = project
+            comment.user = request.user
+            comment.save()
+
+    return redirect("project_detail", pk=pk)
+
+@login_required
+def add_reply(request, pk, comment_id):
+    project = get_object_or_404(Project, pk=pk)
+    parent_comment = get_object_or_404(
+        Comment,
+        pk=comment_id,
+        project=project
     )
 
-    if request.method == "POST" and form.is_valid():
-        project = form.save(commit=False)
-        project.creator = request.user
-        project.save()
+    if request.method == "POST":
+        form = CommentForm(request.POST)
 
-        form.save_m2m()
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.project = project
+            reply.user = request.user
+            reply.parent = parent_comment
+            reply.save()
 
-        for image in request.FILES.getlist("images"):
-            ProjectImage.objects.create(
+    return redirect("project_detail", pk=pk)
+
+@login_required
+def add_rating(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.method == "POST":
+        form = RatingForm(request.POST)
+
+        if form.is_valid():
+            Rating.objects.update_or_create(
                 project=project,
-                image=image
+                user=request.user,
+                defaults={
+                    "value": form.cleaned_data["value"]
+                }
             )
 
-        return redirect(
-            "project_detail",
-            project.pk
-        )
+    return redirect("project_detail", pk=pk)
 
-    return render(request, "projects/form.html", {
-        "form": form
-    })
+@login_required
+def project_create(request):
+    if request.method == "POST":
+        form = ProjectForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.creator = request.user
+            project.save()
+            form.save_m2m()
+
+            images = request.FILES.getlist("images")
+
+            for image in images:
+                ProjectImage.objects.create(
+                    project=project,
+                    image=image
+                )
+
+            return redirect("project_detail", pk=project.pk)
+
+    else:
+        form = ProjectForm()
+
+    return render(
+        request,
+        "projects/project_form.html",
+        {"form": form}
+    )
 
 
 @login_required
 def donate(request, pk):
-    project = get_object_or_404(
-        Project,
-        pk=pk
-    )
+    project = get_object_or_404(Project, pk=pk)
 
-    form = DonationForm(request.POST)
+    if project.is_cancelled:
+        return redirect("project_detail", pk=project.pk)
 
-    if form.is_valid():
-        donation = form.save(commit=False)
+    if request.method == "POST":
+        form = DonationForm(request.POST)
 
-        donation.project = project
-        donation.user = request.user
+        if form.is_valid():
+            donation = form.save(commit=False)
+            donation.project = project
+            donation.donor = request.user
+            donation.save()
 
-        donation.save()
+            return redirect("project_detail", pk=project.pk)
 
-        messages.success(
-            request,
-            "Donation recorded."
-        )
-
-    return redirect(
-        "project_detail",
-        pk
-    )
-
-
-@login_required
-def comment(request, pk):
-    project = get_object_or_404(
-        Project,
-        pk=pk
-    )
-
-    form = CommentForm(request.POST)
-
-    if form.is_valid():
-        new_comment = form.save(commit=False)
-
-        new_comment.project = project
-        new_comment.user = request.user
-
-        new_comment.save()
-
-    return redirect(
-        "project_detail",
-        pk
-    )
-
-
-@login_required
-def rate(request, pk):
-    project = get_object_or_404(
-        Project,
-        pk=pk
-    )
-
-    form = RatingForm(request.POST)
-
-    if form.is_valid():
-        Rating.objects.update_or_create(
-            project=project,
-            user=request.user,
-            defaults={
-                "value": form.cleaned_data["value"]
-            }
-        )
-
-    return redirect(
-        "project_detail",
-        pk
-    )
-
-
-@login_required
-def report(request, pk):
-    project = get_object_or_404(
-        Project,
-        pk=pk
-    )
-
-    form = ReportForm(request.POST)
-
-    if form.is_valid():
-        Report.objects.create(
-            user=request.user,
-            project=project,
-            reason=form.cleaned_data["reason"]
-        )
-
-        messages.success(
-            request,
-            "Project reported."
-        )
-
-    return redirect(
-        "project_detail",
-        pk
-    )
-
-
-@login_required
-def report_comment(request, comment_id):
-    comment_obj = get_object_or_404(
-        Comment,
-        pk=comment_id
-    )
-
-    form = ReportForm(request.POST)
-
-    if form.is_valid():
-        Report.objects.create(
-            user=request.user,
-            comment=comment_obj,
-            reason=form.cleaned_data["reason"]
-        )
-
-        messages.success(
-            request,
-            "Comment reported."
-        )
-
-    return redirect(
-        "project_detail",
-        comment_obj.project.pk
-    )
-
-
-@login_required
-def cancel(request, pk):
-    project = get_object_or_404(
-        Project,
-        pk=pk,
-        creator=request.user
-    )
-
-    if project.running and project.progress < 25:
-        project.cancelled = True
-        project.save()
-
-        messages.success(
-            request,
-            "Project cancelled."
-        )
     else:
-        messages.error(
-            request,
-            "Project can only be cancelled while running and below 25% funded."
+        form = DonationForm()
+
+    return render(
+        request,
+        "projects/donate.html",
+        {
+            "form": form,
+            "project": project
+        }
+    )
+
+@login_required
+def report_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.user = request.user
+            report.report_type = "project"
+            report.project = project
+            report.save()
+
+    return redirect("project_detail", pk=pk)
+
+@login_required
+def report_comment(request, pk, comment_id):
+    project = get_object_or_404(Project, pk=pk)
+
+    comment = get_object_or_404(
+        Comment,
+        pk=comment_id,
+        project=project
+    )
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.user = request.user
+            report.report_type = "comment"
+            report.project = project
+            report.comment = comment
+            report.save()
+
+    return redirect("project_detail", pk=pk)
+
+@login_required
+def cancel_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.user == project.creator:
+        total_donations = sum(
+            donation.amount
+            for donation in project.donations.all()
         )
 
-    return redirect(
-        "project_detail",
-        pk
-    )
+        if total_donations < project.target * 0.25:
+            project.is_cancelled = True
+            project.save()
+
+    return redirect("project_detail", pk=pk)

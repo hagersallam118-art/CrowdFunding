@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Donate</title>
+</head>
+<body>
+
+<h1>Donate to {{ project.title }}</h1>
+
+<p>
+    Target: {{ project.target }} EGP
+</p>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Donate</button>
+</form>
+
+<br>
+
+<a href="{% url 'project_detail' project.pk %}">
+    Back to Project
+</a>
+
+</body>
+</html>
