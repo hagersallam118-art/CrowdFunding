@@ -3,186 +3,604 @@
 {% block content %}
 
 <style>
-    .slider {
-        display: flex;
-        gap: 15px;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        padding: 10px 0;
+    * {
+        box-sizing: border-box;
     }
 
-    .slider .card {
-        min-width: 260px;
+    body {
+        background: #ffffff;
+        color: #222;
+    }
+
+    .home-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 0 24px 60px;
+    }
+
+    /* HERO */
+
+    .hero {
+        text-align: center;
+        padding: 65px 20px 45px;
+    }
+
+    .hero h1 {
+        font-size: 52px;
+        line-height: 1.08;
+        margin: 0 auto 20px;
+        max-width: 750px;
+        font-weight: 800;
+    }
+
+    .hero p {
+        font-size: 19px;
+        color: #666;
+        max-width: 650px;
+        margin: 0 auto 28px;
+    }
+
+    .hero-btn {
+        display: inline-block;
+        background: #167a4a;
+        color: white;
+        padding: 15px 28px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .hero-btn:hover {
+        background: #0f623a;
+    }
+
+    /* SEARCH */
+
+    .search-box {
+        max-width: 900px;
+        margin: 0 auto 25px;
+        display: flex;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    }
+
+    .search-box input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 18px 20px;
+        font-size: 17px;
+    }
+
+    .search-box button {
+        border: none;
+        background: #167a4a;
+        color: white;
+        padding: 0 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* CATEGORIES */
+
+    .categories-scroll {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 15px 0 35px;
+        scrollbar-width: none;
+    }
+
+    .categories-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-pill {
         flex: 0 0 auto;
+        text-decoration: none;
+        color: #222;
+        background: #f5f5f5;
+        padding: 11px 18px;
+        border-radius: 25px;
+        font-weight: 600;
+        border: 1px solid #eee;
+    }
+
+    .category-pill:hover {
+        background: #e9f5ef;
+        color: #167a4a;
+    }
+
+    /* TITLES */
+
+    .section-title {
+        font-size: 30px;
+        margin: 45px 0 20px;
+        font-weight: 800;
+    }
+
+    /* PROJECT GRID */
+
+    .project-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .project-card {
+        border: 1px solid #e5e5e5;
+        border-radius: 18px;
+        overflow: hidden;
+        background: white;
+        transition: .2s;
+    }
+
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .project-image {
+        width: 100%;
+        height: 210px;
+        object-fit: cover;
+        background: #eee;
+    }
+
+    .no-image {
+        height: 210px;
+        background: linear-gradient(
+            135deg,
+            #dff4e8,
+            #b8e3cb
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #167a4a;
+    }
+
+    .project-content {
+        padding: 18px;
+    }
+
+    .project-content h3 {
+        margin: 0 0 10px;
+        font-size: 20px;
+    }
+
+    .project-content p {
+        color: #666;
+        line-height: 1.5;
+        margin: 7px 0;
+    }
+
+    .rating {
+        color: #167a4a !important;
+        font-weight: bold;
+    }
+
+    .view-btn {
+        display: inline-block;
+        margin-top: 12px;
+        color: #167a4a;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    /* TOP PROJECTS SLIDER */
+
+    .project-slider {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: 5px 2px 18px;
+        scrollbar-width: thin;
+    }
+
+    .project-slider .project-card {
+        min-width: 330px;
+        max-width: 330px;
+        flex: 0 0 auto;
+    }
+
+    /* SEARCH RESULT */
+
+    .search-results {
+        background: #f8faf9;
+        padding: 25px;
+        border-radius: 20px;
+        margin-top: 30px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 900px) {
+        .project-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .hero h1 {
+            font-size: 40px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .home-container {
+            padding: 0 15px 40px;
+        }
+
+        .hero {
+            padding: 45px 10px 30px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+        }
+
+        .hero p {
+            font-size: 16px;
+        }
+
+        .search-box input {
+            padding: 15px;
+        }
+
+        .search-box button {
+            padding: 0 18px;
+        }
+
+        .project-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .project-slider .project-card {
+            min-width: 85%;
+            max-width: 85%;
+        }
+
+        .section-title {
+            font-size: 26px;
+        }
     }
 </style>
 
-<h1>Crowd-Funding</h1>
 
-<form method="GET">
-    <input
-        type="text"
-        name="q"
-        value="{{ query }}"
-        placeholder="Search by project title or tag"
-    >
-    <button type="submit">Search</button>
-</form>
+<div class="home-container">
 
-{% if query %}
+    <!-- HERO -->
 
-<h2>Search Results</h2>
+    <section class="hero">
 
-<div class="grid">
+        <h1>
+            Turn your ideas into reality.
+        </h1>
 
-    {% for project in search_results %}
+        <p>
+            Discover inspiring projects or start your own
+            fundraising campaign and make a difference.
+        </p>
 
-        <div class="card">
-            <h3>{{ project.title }}</h3>
-
-            <p>{{ project.details|truncatechars:100 }}</p>
-
+        {% if user.is_authenticated %}
             <a
-                class="btn"
-                href="{% url 'project_detail' project.pk %}">
-                View Project
+                href="{% url 'project_create' %}"
+                class="hero-btn">
+                Start a Project
             </a>
-        </div>
-
-    {% empty %}
-
-        <p>No projects found.</p>
-
-    {% endfor %}
-
-</div>
-
-{% endif %}
-
-
-<h2>Top 5 Rated Running Projects</h2>
-
-<div class="slider">
-
-    {% for project in top_projects %}
-
-        <div class="card">
-
-            <h3>{{ project.title }}</h3>
-
-            <p>
-                Rating:
-                {{ project.rating|floatformat:1 }}/5
-            </p>
-
-            <p>
-                Target:
-                {{ project.target }} EGP
-            </p>
-
+        {% else %}
             <a
-                class="btn"
-                href="{% url 'project_detail' project.pk %}">
-                View Project
+                href="{% url 'register' %}"
+                class="hero-btn">
+                Start Fundraising
             </a>
+        {% endif %}
 
-        </div>
-
-    {% empty %}
-
-        <p>No running projects.</p>
-
-    {% endfor %}
-
-</div>
+    </section>
 
 
-<h2>Latest 5 Projects</h2>
+    <!-- SEARCH -->
 
-<div class="grid">
+    <form method="GET" class="search-box">
 
-    {% for project in latest_projects %}
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search projects, titles or tags"
+        >
 
-        <div class="card">
+        <button type="submit">
+            Search
+        </button>
 
-            <h3>{{ project.title }}</h3>
-
-            <p>{{ project.details|truncatechars:100 }}</p>
-
-            <p>
-                Target:
-                {{ project.target }} EGP
-            </p>
-
-            <a
-                class="btn"
-                href="{% url 'project_detail' project.pk %}">
-                View Project
-            </a>
-
-        </div>
-
-    {% empty %}
-
-        <p>No projects available.</p>
-
-    {% endfor %}
-
-</div>
+    </form>
 
 
-<h2>Latest 5 Featured Projects</h2>
+    <!-- CATEGORIES -->
 
-<div class="grid">
+    <div class="categories-scroll">
 
-    {% for project in featured_projects %}
-
-        <div class="card">
-
-            <h3>{{ project.title }}</h3>
-
-            <p>
-                Rating:
-                {{ project.rating|floatformat:1 }}/5
-            </p>
+        {% for category in categories %}
 
             <a
-                class="btn"
-                href="{% url 'project_detail' project.pk %}">
-                View Project
-            </a>
-
-        </div>
-
-    {% empty %}
-
-        <p>No featured projects.</p>
-
-    {% endfor %}
-
-</div>
-
-
-<h2>Categories</h2>
-
-<div class="grid">
-
-    {% for category in categories %}
-
-        <div class="card">
-
-            <a
+                class="category-pill"
                 href="{% url 'category_detail' category.id %}">
                 {{ category.name }}
             </a>
 
+        {% endfor %}
+
+    </div>
+
+
+    <!-- SEARCH RESULTS -->
+
+    {% if query %}
+
+    <section class="search-results">
+
+        <h2 class="section-title">
+            Search Results
+        </h2>
+
+        <div class="project-grid">
+
+            {% for project in search_results %}
+
+            <div class="project-card">
+
+                {% with first_image=project.images.first %}
+
+                    {% if first_image %}
+
+                        <img
+                            class="project-image"
+                            src="{{ first_image.image.url }}"
+                            alt="{{ project.title }}"
+                        >
+
+                    {% else %}
+
+                        <div class="no-image">
+                            CrowdFunding
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+                <div class="project-content">
+
+                    <h3>{{ project.title }}</h3>
+
+                    <p>
+                        {{ project.details|truncatechars:100 }}
+                    </p>
+
+                    <a
+                        class="view-btn"
+                        href="{% url 'project_detail' project.pk %}">
+                        View Project →
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+                <p>No projects found.</p>
+
+            {% endfor %}
+
         </div>
 
-    {% empty %}
+    </section>
 
-        <p>No categories available.</p>
+    {% endif %}
 
-    {% endfor %}
+
+    <!-- TOP RATED -->
+
+    <h2 class="section-title">
+        Top Rated Projects
+    </h2>
+
+    <div class="project-slider">
+
+        {% for project in top_projects %}
+
+        <div class="project-card">
+
+            {% with first_image=project.images.first %}
+
+                {% if first_image %}
+
+                    <img
+                        class="project-image"
+                        src="{{ first_image.image.url }}"
+                        alt="{{ project.title }}"
+                    >
+
+                {% else %}
+
+                    <div class="no-image">
+                        CrowdFunding
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+            <div class="project-content">
+
+                <h3>
+                    {{ project.title }}
+                </h3>
+
+                <p class="rating">
+                    ★ {{ project.rating|floatformat:1 }}/5
+                </p>
+
+                <p>
+                    Target:
+                    {{ project.target }} EGP
+                </p>
+
+                <a
+                    class="view-btn"
+                    href="{% url 'project_detail' project.pk %}">
+                    View Project →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <p>No running projects.</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- FEATURED -->
+
+    <h2 class="section-title">
+        Featured Projects
+    </h2>
+
+    <div class="project-grid">
+
+        {% for project in featured_projects %}
+
+        <div class="project-card">
+
+            {% with first_image=project.images.first %}
+
+                {% if first_image %}
+
+                    <img
+                        class="project-image"
+                        src="{{ first_image.image.url }}"
+                        alt="{{ project.title }}"
+                    >
+
+                {% else %}
+
+                    <div class="no-image">
+                        Featured
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+            <div class="project-content">
+
+                <h3>
+                    {{ project.title }}
+                </h3>
+
+                <p>
+                    {{ project.details|truncatechars:110 }}
+                </p>
+
+                <p class="rating">
+                    ★ {{ project.rating|floatformat:1 }}/5
+                </p>
+
+                <a
+                    class="view-btn"
+                    href="{% url 'project_detail' project.pk %}">
+                    View Project →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <p>No featured projects.</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- LATEST -->
+
+    <h2 class="section-title">
+        Latest Projects
+    </h2>
+
+    <div class="project-grid">
+
+        {% for project in latest_projects %}
+
+        <div class="project-card">
+
+            {% with first_image=project.images.first %}
+
+                {% if first_image %}
+
+                    <img
+                        class="project-image"
+                        src="{{ first_image.image.url }}"
+                        alt="{{ project.title }}"
+                    >
+
+                {% else %}
+
+                    <div class="no-image">
+                        New Project
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+            <div class="project-content">
+
+                <h3>
+                    {{ project.title }}
+                </h3>
+
+                <p>
+                    {{ project.details|truncatechars:100 }}
+                </p>
+
+                <p>
+                    Target:
+                    {{ project.target }} EGP
+                </p>
+
+                <a
+                    class="view-btn"
+                    href="{% url 'project_detail' project.pk %}">
+                    View Project →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <p>No projects available.</p>
+
+        {% endfor %}
+
+    </div>
 
 </div>
 
