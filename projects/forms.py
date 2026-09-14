@@ -25,9 +25,7 @@ class ProjectForm(forms.ModelForm):
             "details": forms.Textarea(
                 attrs={"rows": 5}
             ),
-            "tags": forms.SelectMultiple(
-                attrs={"size": 5}
-            ),
+            "tags": forms.CheckboxSelectMultiple(),
         }
 
 

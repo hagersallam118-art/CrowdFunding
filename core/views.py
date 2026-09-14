@@ -10,22 +10,26 @@ def home(request):
 
     categories = Category.objects.all()
 
-    latest_projects = Project.objects.order_by('-created_at')[:5]
-
-    featured_projects = Project.objects.filter(
-        featured=True
+    latest_projects = Project.objects.filter(
+    is_cancelled=False
     ).order_by('-created_at')[:5]
 
+    featured_projects = Project.objects.filter(
+    featured=True,
+    is_cancelled=False
+).order_by('-created_at')[:5]
+
     top_projects = (
-        Project.objects
-        .filter(
-            start_time__lte=now,
-            end_time__gte=now,
-            is_cancelled=False
-        )
-        .annotate(avg_rating=Avg('ratings__value'))
-        .order_by('-avg_rating')[:5]
+    Project.objects
+    .filter(
+        start_time__lte=now,
+        end_time__gte=now,
+        is_cancelled=False,
+        ratings__isnull=False
     )
+    .annotate(avg_rating=Avg('ratings__value'))
+    .order_by('-avg_rating')[:5]
+)  
 
     query = request.GET.get('q', '').strip()
 
@@ -33,10 +37,11 @@ def home(request):
 
     if query:
         search_results = Project.objects.filter(
-            Q(title__icontains=query) |
-            Q(tags__name__icontains=query)
-        ).distinct()
-
+    is_cancelled=False
+         ).filter(
+    Q(title__icontains=query) |
+    Q(tags__name__icontains=query)
+          ).distinct()
     return render(request, 'core/home.html', {
         'categories': categories,
         'latest_projects': latest_projects,
@@ -51,7 +56,8 @@ def category_detail(request, category_id):
     category = get_object_or_404(Category, id=category_id)
 
     projects = Project.objects.filter(
-        category=category
+        category=category,
+        is_cancelled=False
     ).order_by('-created_at')
 
     return render(request, 'core/category_detail.html', {

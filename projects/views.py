@@ -1,6 +1,9 @@
+from decimal import Decimal
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Avg
+from django.utils import timezone
 
 from .forms import DonationForm, ProjectForm, CommentForm, RatingForm, ReportForm
 from .models import Project, ProjectImage, Comment, Rating, Report
@@ -148,16 +151,47 @@ def donate(request, pk):
     if project.is_cancelled:
         return redirect("project_detail", pk=project.pk)
 
+    now = timezone.now()
+
+    if now < project.start_time:
+     messages.error(
+        request,
+        "This project has not started yet."
+    )
+     return redirect("project_detail", pk=project.pk)
+
+    if now > project.end_time:
+      messages.error(
+        request,
+        "This project has already ended."
+    )
+      return redirect("project_detail", pk=project.pk)
+
     if request.method == "POST":
         form = DonationForm(request.POST)
 
         if form.is_valid():
-            donation = form.save(commit=False)
-            donation.project = project
-            donation.donor = request.user
-            donation.save()
+            amount = form.cleaned_data["amount"]
 
-            return redirect("project_detail", pk=project.pk)
+            total_donations = sum(
+                donation.amount
+                for donation in project.donations.all()
+            )
+
+            remaining = project.target - total_donations
+
+            if amount > remaining:
+                form.add_error(
+                    "amount",
+                    f"You can donate a maximum of {remaining}."
+                )
+            else:
+                donation = form.save(commit=False)
+                donation.project = project
+                donation.donor = request.user
+                donation.save()
+
+                return redirect("project_detail", pk=project.pk)
 
     else:
         form = DonationForm()
@@ -214,14 +248,27 @@ def report_comment(request, pk, comment_id):
 def cancel_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    if request.user == project.creator:
-        total_donations = sum(
-            donation.amount
-            for donation in project.donations.all()
-        )
+    if request.user != project.creator:
+        messages.error(request, "You are not allowed to cancel this project.")
+        return redirect("project_detail", pk=pk)
 
-        if total_donations < project.target * 0.25:
-            project.is_cancelled = True
-            project.save()
+    total_donations = sum(
+        donation.amount
+        for donation in project.donations.all()
+    )
+
+    if total_donations < project.target * Decimal("0.25"):
+        project.is_cancelled = True
+        project.save(update_fields=["is_cancelled"])
+
+        messages.success(
+            request,
+            "Project cancelled successfully."
+        )
+    else:
+        messages.error(
+            request,
+            "You cannot cancel this project because donations reached 25% of the target."
+        )
 
     return redirect("project_detail", pk=pk)

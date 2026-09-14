@@ -5,6 +5,8 @@ from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from projects.models import Donation
 
@@ -33,12 +35,16 @@ def register_view(request):
 
         token = make_activation_token(user)
 
+        encoded_token = urlsafe_base64_encode(
+              force_bytes(token)
+              ).rstrip("=")
+
         activation_url = request.build_absolute_uri(
-            reverse(
-                "activate",
-                args=[token]
-            )
-        )
+              reverse(
+              "activate",
+        args=[encoded_token]
+         )
+         )
 
         send_mail(
             "Activate your Crowd-Funding account",
@@ -67,6 +73,16 @@ def register_view(request):
 
 
 def activate_view(request, token):
+   
+    try:
+       token += "=" * (-len(token) % 4)
+       token = force_str(urlsafe_base64_decode(token))
+    except (ValueError, TypeError, UnicodeDecodeError):
+     return render(
+        request,
+        "accounts/activation_invalid.html"
+    )
+
     user_id = get_user_from_activation_token(token)
 
     if not user_id:
@@ -80,10 +96,15 @@ def activate_view(request, token):
         pk=user_id
     )
 
+    if user.is_active:
+        messages.info(
+            request,
+            "This account is already activated."
+        )
+        return redirect("login")
+
     user.is_active = True
-    user.save(
-        update_fields=["is_active"]
-    )
+    user.save(update_fields=["is_active"])
 
     messages.success(
         request,

@@ -260,6 +260,24 @@
             width: 100%;
         }
     }
+
+    .project-form select[multiple] {
+        min-height: 150px;
+        padding: 10px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .project-form select[multiple] option {
+        padding: 8px 10px;
+        margin: 3px 0;
+        border-radius: 6px;
+    }
+
+    .project-form select[multiple] option:checked {
+        background: #16a34a;
+        color: white;
+    }
 </style>
 
 
@@ -289,11 +307,7 @@
         </h2>
 
 
-        <form
-            method="post"
-            enctype="multipart/form-data"
-            class="project-form"
-        >
+        <form method="post" enctype="multipart/form-data" class="project-form">
 
             {% csrf_token %}
 
@@ -310,15 +324,41 @@
                     You can select multiple images for your project.
                 </p>
 
-                <input
-                    type="file"
-                    name="images"
-                    accept="image/*"
-                    multiple
-                >
+                <input type="file" name="images" accept="image/*" multiple>
 
             </div>
+            <div id="selected-images"></div>
 
+            <script>
+                const imageInput = document.querySelector('input[name="images"]');
+                const selectedImages = document.getElementById('selected-images');
+
+                let files = [];
+
+                imageInput.addEventListener('change', function () {
+                    for (const file of this.files) {
+                        if (!files.some(f => f.name === file.name && f.size === file.size)) {
+                            files.push(file);
+                        }
+                    }
+
+                    const dataTransfer = new DataTransfer();
+
+                    files.forEach(file => {
+                        dataTransfer.items.add(file);
+                    });
+
+                    imageInput.files = dataTransfer.files;
+
+                    selectedImages.innerHTML = '';
+
+                    files.forEach(file => {
+                        const item = document.createElement('p');
+                        item.textContent = '✓ ' + file.name;
+                        selectedImages.appendChild(item);
+                    });
+                });
+            </script>
 
             <div class="tip-box">
                 <strong>Tip:</strong>
@@ -329,17 +369,11 @@
 
             <div class="form-actions">
 
-                <button
-                    type="submit"
-                    class="create-project-btn"
-                >
+                <button type="submit" class="create-project-btn">
                     Create Project
                 </button>
 
-                <a
-                    href="{% url 'home' %}"
-                    class="cancel-btn"
-                >
+                <a href="{% url 'home' %}" class="cancel-btn">
                     Cancel
                 </a>
 

@@ -40,7 +40,7 @@
         background: white;
         border: 1px solid #e5e7eb;
         border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
     }
 
     .main-card {
@@ -88,10 +88,10 @@
         height: 44px;
         border: none;
         border-radius: 50%;
-        background: rgba(255,255,255,0.92);
+        background: rgba(255, 255, 255, 0.92);
         font-size: 25px;
         cursor: pointer;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         z-index: 5;
     }
 
@@ -277,7 +277,7 @@
     .form-box textarea:focus,
     .form-box select:focus {
         border-color: #16a34a;
-        box-shadow: 0 0 0 3px rgba(22,163,74,0.10);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
     }
 
     .two-columns {
@@ -379,7 +379,7 @@
 
     .similar-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 24px rgba(0,0,0,.08);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, .08);
     }
 
     .similar-image {
@@ -487,27 +487,21 @@
 
                 {% if project.images.all %}
 
-                <button type="button"
-                        class="slider-btn slider-left"
-                        onclick="document.getElementById('projectSlider').scrollBy({left:-700, behavior:'smooth'})">
+                <button type="button" class="slider-btn slider-left"
+                    onclick="document.getElementById('projectSlider').scrollBy({left:-700, behavior:'smooth'})">
                     ‹
                 </button>
 
                 <div class="image-slider" id="projectSlider">
 
                     {% for image in project.images.all %}
-                    <img
-                        class="project-image"
-                        src="{{ image.image.url }}"
-                        alt="{{ project.title }}"
-                    >
+                    <img class="project-image" src="{{ image.image.url }}" alt="{{ project.title }}">
                     {% endfor %}
 
                 </div>
 
-                <button type="button"
-                        class="slider-btn slider-right"
-                        onclick="document.getElementById('projectSlider').scrollBy({left:700, behavior:'smooth'})">
+                <button type="button" class="slider-btn slider-right"
+                    onclick="document.getElementById('projectSlider').scrollBy({left:700, behavior:'smooth'})">
                     ›
                 </button>
 
@@ -542,6 +536,16 @@
                         {{ project.creator.last_name }}
                     </strong>
                 </div>
+                <div class="tags-line">
+                    <strong>Tags:</strong>
+
+                    {% for tag in project.tags.all %}
+                    <span>{{ tag.name }}</span>
+                    {% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                    No tags
+                    {% endfor %}
+                </div>
 
             </div>
 
@@ -560,10 +564,7 @@
             </div>
 
             <div class="progress-bg">
-                <div
-                    class="progress-fill"
-                    style="width: {{ progress }}%;">
-                </div>
+                <div class="progress-fill" style="width: {{ progress }}%;"></div>
             </div>
 
             <div class="stats-row">
@@ -584,30 +585,32 @@
 
             </div>
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and not project.is_cancelled %}
 
-                <a
-                    href="{% url 'donate' project.pk %}"
-                    class="action-btn green-btn">
-                    Donate Now
-                </a>
+            <a href="{% url 'donate' project.pk %}" class="action-btn green-btn">
+                Donate Now
+            </a>
+
+            {% elif project.is_cancelled %}
+
+            <div class="login-message">
+                This project has been cancelled.
+            </div>
 
             {% else %}
 
-                <div class="login-message">
-                    Login to donate, comment and rate this project.
-                </div>
+            <div class="login-message">
+                Login to donate, comment and rate this project.
+            </div>
 
             {% endif %}
 
             {% if user == project.creator %}
 
-                <a
-                    href="{% url 'cancel_project' project.pk %}"
-                    class="action-btn danger-btn"
-                    onclick="return confirm('Are you sure you want to cancel this project?');">
-                    Cancel Project
-                </a>
+            <a href="{% url 'cancel_project' project.pk %}" class="action-btn danger-btn"
+                onclick="return confirm('Are you sure you want to cancel this project?');">
+                Cancel Project
+            </a>
 
             {% endif %}
 
@@ -637,18 +640,13 @@
                     ★ ★ ★ ★ ★
                 </div>
 
-                <form
-                    method="post"
-                    action="{% url 'add_rating' project.pk %}"
-                    class="form-box">
+                <form method="post" action="{% url 'add_rating' project.pk %}" class="form-box">
 
                     {% csrf_token %}
 
                     {{ rating_form.as_p }}
 
-                    <button
-                        type="submit"
-                        class="action-btn green-btn">
+                    <button type="submit" class="action-btn green-btn">
                         Submit Rating
                     </button>
 
@@ -668,18 +666,13 @@
                     or misleading content, you can report it.
                 </p>
 
-                <form
-                    method="post"
-                    action="{% url 'report_project' project.pk %}"
-                    class="form-box">
+                <form method="post" action="{% url 'report_project' project.pk %}" class="form-box">
 
                     {% csrf_token %}
 
                     {{ report_form.as_p }}
 
-                    <button
-                        type="submit"
-                        class="action-btn danger-btn">
+                    <button type="submit" class="action-btn danger-btn">
                         Report Project
                     </button>
 
@@ -703,19 +696,13 @@
 
         {% if user.is_authenticated %}
 
-        <form
-            method="post"
-            action="{% url 'add_comment' project.pk %}"
-            class="form-box"
-            style="margin-bottom:30px;">
+        <form method="post" action="{% url 'add_comment' project.pk %}" class="form-box" style="margin-bottom:30px;">
 
             {% csrf_token %}
 
             {{ comment_form.as_p }}
 
-            <button
-                type="submit"
-                class="action-btn green-btn">
+            <button type="submit" class="action-btn green-btn">
                 Add Comment
             </button>
 
@@ -748,41 +735,27 @@
 
             {% if user.is_authenticated %}
 
-            <form
-                class="small-form"
-                method="post"
-                action="{% url 'report_comment' project.pk c.pk %}">
+            <form class="small-form" method="post" action="{% url 'report_comment' project.pk c.pk %}">
 
                 {% csrf_token %}
 
-                <input
-                    type="text"
-                    name="reason"
-                    placeholder="Reason for reporting..."
-                    required>
+                <input type="text" name="reason" placeholder="Reason for reporting..." required>
 
-                <button
-                    class="small-btn report-small"
-                    type="submit">
+                <button class="small-btn report-small" type="submit">
                     Report
                 </button>
 
             </form>
 
 
-            <form
-                method="post"
-                action="{% url 'add_reply' project.pk c.pk %}"
-                class="form-box"
+            <form method="post" action="{% url 'add_reply' project.pk c.pk %}" class="form-box"
                 style="margin-top:15px;">
 
                 {% csrf_token %}
 
                 {{ comment_form.as_p }}
 
-                <button
-                    type="submit"
-                    class="outline-btn small-btn">
+                <button type="submit" class="outline-btn small-btn">
                     Reply
                 </button>
 
@@ -836,27 +809,22 @@
 
                 {% with first_image=similar.images.first %}
 
-                    {% if first_image %}
+                {% if first_image %}
 
-                    <img
-                        class="similar-image"
-                        src="{{ first_image.image.url }}"
-                        alt="{{ similar.title }}">
+                <img class="similar-image" src="{{ first_image.image.url }}" alt="{{ similar.title }}">
 
-                    {% else %}
+                {% else %}
 
-                    <div
-                        class="similar-image"
-                        style="
+                <div class="similar-image" style="
                             display:flex;
                             align-items:center;
                             justify-content:center;
                             color:#9ca3af;
                         ">
-                        No Image
-                    </div>
+                    No Image
+                </div>
 
-                    {% endif %}
+                {% endif %}
 
                 {% endwith %}
 
@@ -870,9 +838,7 @@
                         {{ similar.details|truncatechars:80 }}
                     </p>
 
-                    <a
-                        href="{% url 'project_detail' similar.pk %}"
-                        class="similar-link">
+                    <a href="{% url 'project_detail' similar.pk %}" class="similar-link">
                         View Project →
                     </a>
 

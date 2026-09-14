@@ -64,7 +64,7 @@
         border-radius: 16px;
         overflow: hidden;
         background: white;
-        box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
     }
 
     .search-box input {
@@ -140,7 +140,7 @@
 
     .project-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
     }
 
     .project-image {
@@ -152,11 +152,9 @@
 
     .no-image {
         height: 210px;
-        background: linear-gradient(
-            135deg,
-            #dff4e8,
-            #b8e3cb
-        );
+        background: linear-gradient(135deg,
+                #dff4e8,
+                #b8e3cb);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -288,17 +286,13 @@
         </p>
 
         {% if user.is_authenticated %}
-            <a
-                href="{% url 'project_create' %}"
-                class="hero-btn">
-                Start a Project
-            </a>
+        <a href="{% url 'project_create' %}" class="hero-btn">
+            Start a Project
+        </a>
         {% else %}
-            <a
-                href="{% url 'register' %}"
-                class="hero-btn">
-                Start Fundraising
-            </a>
+        <a href="{% url 'register' %}" class="hero-btn">
+            Start Fundraising
+        </a>
         {% endif %}
 
     </section>
@@ -308,12 +302,7 @@
 
     <form method="GET" class="search-box">
 
-        <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            placeholder="Search projects, titles or tags"
-        >
+        <input type="text" name="q" value="{{ query }}" placeholder="Search projects, titles or tags">
 
         <button type="submit">
             Search
@@ -328,11 +317,9 @@
 
         {% for category in categories %}
 
-            <a
-                class="category-pill"
-                href="{% url 'category_detail' category.id %}">
-                {{ category.name }}
-            </a>
+        <a class="category-pill" href="{% url 'category_detail' category.id %}">
+            {{ category.name }}
+        </a>
 
         {% endfor %}
 
@@ -357,21 +344,17 @@
 
                 {% with first_image=project.images.first %}
 
-                    {% if first_image %}
+                {% if first_image %}
 
-                        <img
-                            class="project-image"
-                            src="{{ first_image.image.url }}"
-                            alt="{{ project.title }}"
-                        >
+                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
 
-                    {% else %}
+                {% else %}
 
-                        <div class="no-image">
-                            CrowdFunding
-                        </div>
+                <div class="no-image">
+                    CrowdFunding
+                </div>
 
-                    {% endif %}
+                {% endif %}
 
                 {% endwith %}
 
@@ -383,9 +366,7 @@
                         {{ project.details|truncatechars:100 }}
                     </p>
 
-                    <a
-                        class="view-btn"
-                        href="{% url 'project_detail' project.pk %}">
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
                         View Project →
                     </a>
 
@@ -395,7 +376,7 @@
 
             {% empty %}
 
-                <p>No projects found.</p>
+            <p>No projects found.</p>
 
             {% endfor %}
 
@@ -411,197 +392,181 @@
     <h2 class="section-title">
         Top Rated Projects
     </h2>
+    
 
     <div class="project-slider">
 
         {% for project in top_projects %}
 
-        <div class="project-card">
 
-            {% with first_image=project.images.first %}
+            <div class="project-card">
+
+                {% with first_image=project.images.first %}
 
                 {% if first_image %}
 
-                    <img
-                        class="project-image"
-                        src="{{ first_image.image.url }}"
-                        alt="{{ project.title }}"
-                    >
+                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
 
                 {% else %}
 
-                    <div class="no-image">
-                        CrowdFunding
-                    </div>
+                <div class="no-image">
+                    CrowdFunding
+                </div>
 
                 {% endif %}
 
-            {% endwith %}
+                {% endwith %}
 
-            <div class="project-content">
+                <div class="project-content">
 
-                <h3>
-                    {{ project.title }}
-                </h3>
+                    <h3>
+                        {{ project.title }}
+                    </h3>
 
-                <p class="rating">
-                    ★ {{ project.rating|floatformat:1 }}/5
-                </p>
+                    <p class="rating">
+                        ★ {{ project.avg_rating|default:0|floatformat:1 }}/5
+                    </p>
 
-                <p>
-                    Target:
-                    {{ project.target }} EGP
-                </p>
+                    <p>
+                        Target:
+                        {{ project.target }} EGP
+                    </p>
 
-                <a
-                    class="view-btn"
-                    href="{% url 'project_detail' project.pk %}">
-                    View Project →
-                </a>
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project →
+                    </a>
+
+                </div>
 
             </div>
 
-        </div>
-
-        {% empty %}
+            {% empty %}
 
             <p>No running projects.</p>
 
-        {% endfor %}
-
-    </div>
-
-
-    <!-- FEATURED -->
-
-    <h2 class="section-title">
-        Featured Projects
-    </h2>
-
-    <div class="project-grid">
-
-        {% for project in featured_projects %}
-
-        <div class="project-card">
-
-            {% with first_image=project.images.first %}
-
-                {% if first_image %}
-
-                    <img
-                        class="project-image"
-                        src="{{ first_image.image.url }}"
-                        alt="{{ project.title }}"
-                    >
-
-                {% else %}
-
-                    <div class="no-image">
-                        Featured
-                    </div>
-
-                {% endif %}
-
-            {% endwith %}
-
-            <div class="project-content">
-
-                <h3>
-                    {{ project.title }}
-                </h3>
-
-                <p>
-                    {{ project.details|truncatechars:110 }}
-                </p>
-
-                <p class="rating">
-                    ★ {{ project.rating|floatformat:1 }}/5
-                </p>
-
-                <a
-                    class="view-btn"
-                    href="{% url 'project_detail' project.pk %}">
-                    View Project →
-                </a>
-
-            </div>
+            {% endfor %}
 
         </div>
 
-        {% empty %}
+
+        <!-- FEATURED -->
+
+        <h2 class="section-title">
+            Featured Projects
+        </h2>
+
+        <div class="project-grid">
+
+            {% for project in featured_projects %}
+
+            <div class="project-card">
+
+                {% with first_image=project.images.first %}
+
+                {% if first_image %}
+
+                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
+
+                {% else %}
+
+                <div class="no-image">
+                    Featured
+                </div>
+
+                {% endif %}
+
+                {% endwith %}
+
+                <div class="project-content">
+
+                    <h3>
+                        {{ project.title }}
+                    </h3>
+
+                    <p>
+                        {{ project.details|truncatechars:110 }}
+                    </p>
+
+                    <p class="rating">
+                        ★ {{ project.avg_rating|default:0|floatformat:1 }}/5
+                    </p>
+
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project →
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% empty %}
 
             <p>No featured projects.</p>
 
-        {% endfor %}
-
-    </div>
-
-
-    <!-- LATEST -->
-
-    <h2 class="section-title">
-        Latest Projects
-    </h2>
-
-    <div class="project-grid">
-
-        {% for project in latest_projects %}
-
-        <div class="project-card">
-
-            {% with first_image=project.images.first %}
-
-                {% if first_image %}
-
-                    <img
-                        class="project-image"
-                        src="{{ first_image.image.url }}"
-                        alt="{{ project.title }}"
-                    >
-
-                {% else %}
-
-                    <div class="no-image">
-                        New Project
-                    </div>
-
-                {% endif %}
-
-            {% endwith %}
-
-            <div class="project-content">
-
-                <h3>
-                    {{ project.title }}
-                </h3>
-
-                <p>
-                    {{ project.details|truncatechars:100 }}
-                </p>
-
-                <p>
-                    Target:
-                    {{ project.target }} EGP
-                </p>
-
-                <a
-                    class="view-btn"
-                    href="{% url 'project_detail' project.pk %}">
-                    View Project →
-                </a>
-
-            </div>
+            {% endfor %}
 
         </div>
 
-        {% empty %}
+
+        <!-- LATEST -->
+
+        <h2 class="section-title">
+            Latest Projects
+        </h2>
+
+        <div class="project-grid">
+
+            {% for project in latest_projects %}
+
+            <div class="project-card">
+
+                {% with first_image=project.images.first %}
+
+                {% if first_image %}
+
+                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
+
+                {% else %}
+
+                <div class="no-image">
+                    New Project
+                </div>
+
+                {% endif %}
+
+                {% endwith %}
+
+                <div class="project-content">
+
+                    <h3>
+                        {{ project.title }}
+                    </h3>
+
+                    <p>
+                        {{ project.details|truncatechars:100 }}
+                    </p>
+
+                    <p>
+                        Target:
+                        {{ project.target }} EGP
+                    </p>
+
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project →
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% empty %}
 
             <p>No projects available.</p>
 
-        {% endfor %}
+            {% endfor %}
+
+        </div>
 
     </div>
 
-</div>
-
-{% endblock %}
+    {% endblock %}
