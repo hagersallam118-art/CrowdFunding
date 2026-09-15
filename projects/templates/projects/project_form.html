@@ -5,77 +5,136 @@
 {% block content %}
 
 <style>
-    .create-page {
-        max-width: 900px;
-        margin: 45px auto 80px;
-        padding: 0 20px;
+    * {
+        box-sizing: border-box;
     }
+
+    .create-page {
+        max-width: 980px;
+        margin: 45px auto 80px;
+        padding: 0 22px;
+        color: #1d4938;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
 
     .create-header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 32px;
     }
 
     .create-icon {
-        width: 65px;
-        height: 65px;
-        margin: 0 auto 15px;
-        border-radius: 18px;
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 17px;
+        border-radius: 22px;
 
         display: flex;
         align-items: center;
         justify-content: center;
 
-        background: #dcfce7;
-        color: #15803d;
+        background: linear-gradient(135deg, #e2f7ee, #c8ecdc);
+        color: #25815b;
 
-        font-size: 30px;
-        font-weight: bold;
+        font-size: 34px;
+        font-weight: 800;
+
+        box-shadow: 0 8px 24px rgba(39, 115, 83, 0.12);
     }
 
     .create-header h1 {
         margin: 0;
-        color: #111827;
+        color: #173d30;
         font-size: 36px;
+        font-weight: 900;
+        letter-spacing: -0.6px;
     }
 
     .create-header p {
-        margin-top: 10px;
-        color: #6b7280;
-        font-size: 16px;
+        max-width: 620px;
+        margin: 11px auto 0;
+        color: #718078;
+        font-size: 15px;
+        line-height: 1.7;
     }
+
+    /* =========================
+       MAIN CARD
+    ========================= */
 
     .create-card {
-        background: white;
-        border: 1px solid #e5e7eb;
+        background: #ffffff;
+        border: 1px solid #dcece6;
         border-radius: 24px;
+        padding: 38px;
 
-        padding: 35px;
+        box-shadow:
+            0 15px 45px rgba(39, 93, 75, 0.08);
 
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+        position: relative;
+        overflow: hidden;
     }
+
+    .create-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+
+        background: linear-gradient(
+            90deg,
+            #45b995,
+            #2fa987,
+            #72d4b4
+        );
+    }
+
+    /* =========================
+       SECTION TITLE
+    ========================= */
 
     .form-section-title {
-        font-size: 20px;
-        color: #111827;
-        margin-bottom: 20px;
+        font-size: 21px;
+        color: #1d4938;
+        margin: 0 0 27px;
+        padding-bottom: 14px;
 
-        padding-bottom: 12px;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e3eee9;
+        position: relative;
     }
 
+    .form-section-title::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+
+        width: 70px;
+        height: 3px;
+
+        background: #45b995;
+        border-radius: 20px;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
     .project-form p {
-        margin-bottom: 20px;
+        margin: 0 0 21px;
     }
 
     .project-form label {
         display: block;
-
         margin-bottom: 8px;
 
-        color: #374151;
-        font-weight: 700;
-        font-size: 14px;
+        color: #315247;
+        font-weight: 800;
+        font-size: 13px;
     }
 
     .project-form input,
@@ -85,51 +144,66 @@
 
         padding: 13px 14px;
 
-        border: 1px solid #d1d5db;
+        border: 1px solid #d3e4dd;
         border-radius: 11px;
 
-        background: #fff;
-        color: #111827;
+        background: #fbfefd;
+        color: #263c34;
 
-        font-size: 15px;
+        font-size: 14px;
         font-family: inherit;
 
         outline: none;
-        transition: 0.2s;
+        transition: 0.2s ease;
     }
 
-    .project-form textarea {
-        min-height: 130px;
-        resize: vertical;
+    .project-form input:hover,
+    .project-form textarea:hover,
+    .project-form select:hover {
+        border-color: #b8d8cd;
     }
 
     .project-form input:focus,
     .project-form textarea:focus,
     .project-form select:focus {
-        border-color: #16a34a;
+        border-color: #45b995;
+
+        background: #ffffff;
 
         box-shadow:
-            0 0 0 3px rgba(22, 163, 74, 0.10);
+            0 0 0 3px rgba(69, 185, 149, 0.11);
+    }
+
+    .project-form textarea {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.7;
     }
 
     .project-form input[type="checkbox"] {
         width: auto;
+        accent-color: #45b995;
     }
 
     .helptext {
         display: block;
 
-        color: #9ca3af;
-        font-size: 12px;
+        color: #8a9993;
+        font-size: 11px;
+        line-height: 1.5;
 
-        margin-top: 5px;
+        margin-top: 6px;
     }
+
+    /* =========================
+       ERRORS
+    ========================= */
 
     .errorlist {
         list-style: none;
 
-        padding: 10px 12px;
-        margin-bottom: 8px;
+        padding: 11px 13px;
+        margin: 0 0 8px;
 
         border-radius: 10px;
 
@@ -137,44 +211,142 @@
         border: 1px solid #fecdd3;
 
         color: #be123c;
-        font-size: 13px;
+        font-size: 12px;
+        line-height: 1.5;
     }
 
+    /* =========================
+       MULTIPLE TAGS
+    ========================= */
+
+    .project-form select[multiple] {
+        min-height: 155px;
+        padding: 9px;
+
+        background: #fbfefd;
+        cursor: pointer;
+    }
+
+    .project-form select[multiple] option {
+        padding: 9px 10px;
+        margin: 3px 0;
+
+        border-radius: 7px;
+    }
+
+    .project-form select[multiple] option:checked {
+        background: #45b995;
+        color: white;
+    }
+
+    /* =========================
+       IMAGES
+    ========================= */
+
     .images-box {
-        margin-top: 25px;
+        margin-top: 27px;
 
-        padding: 22px;
+        padding: 23px;
 
-        border: 2px dashed #bbf7d0;
-        border-radius: 16px;
+        border: 2px dashed #9fd7c2;
+        border-radius: 17px;
 
-        background: #f0fdf4;
+        background: linear-gradient(
+            145deg,
+            #f5fcf9,
+            #eefaf5
+        );
+
+        transition: 0.2s ease;
+    }
+
+    .images-box:hover {
+        border-color: #45b995;
+        background: #f1fbf7;
     }
 
     .images-box h3 {
         margin: 0 0 6px;
 
-        color: #166534;
+        color: #277253;
         font-size: 17px;
+        font-weight: 800;
     }
 
     .images-box p {
         margin: 0 0 15px;
 
-        color: #6b7280;
-        font-size: 13px;
+        color: #718078;
+        font-size: 12px;
+        line-height: 1.6;
     }
 
     .images-box input[type="file"] {
         width: 100%;
 
-        padding: 13px;
+        padding: 12px;
 
-        border: 1px solid #bbf7d0;
+        border: 1px solid #cce4da;
         border-radius: 10px;
 
         background: white;
+        color: #53645d;
+
+        cursor: pointer;
     }
+
+    .images-box input[type="file"]:focus {
+        outline: 2px solid rgba(69, 185, 149, 0.15);
+    }
+
+    /* Selected images list */
+
+    #selected-images {
+        margin-top: 12px;
+    }
+
+    #selected-images p {
+        margin: 6px 0;
+        padding: 9px 12px;
+
+        border-radius: 9px;
+
+        background: #eff9f5;
+        color: #277253;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        border: 1px solid #d8eee5;
+    }
+
+    /* =========================
+       TIP
+    ========================= */
+
+    .tip-box {
+        margin-top: 25px;
+
+        padding: 16px 19px;
+
+        border-radius: 14px;
+
+        background: #fffaf0;
+        border: 1px solid #f5d994;
+
+        color: #85601b;
+
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .tip-box strong {
+        color: #a36b0b;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
 
     .form-actions {
         display: flex;
@@ -191,64 +363,97 @@
 
         padding: 15px;
 
-        background: #16a34a;
+        background: linear-gradient(
+            135deg,
+            #45b995,
+            #2fa987
+        );
+
         color: white;
 
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 800;
 
         cursor: pointer;
-        transition: 0.2s;
+
+        box-shadow:
+            0 7px 18px rgba(47, 169, 135, 0.18);
+
+        transition: 0.22s ease;
     }
 
     .create-project-btn:hover {
-        background: #15803d;
-        transform: translateY(-1px);
+        background: linear-gradient(
+            135deg,
+            #3eae8d,
+            #278f71
+        );
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 10px 23px rgba(47, 169, 135, 0.24);
     }
 
     .cancel-btn {
+        min-width: 125px;
+
         padding: 15px 24px;
 
         border-radius: 12px;
 
-        background: #f3f4f6;
-        color: #374151;
+        background: #f3f7f5;
+        color: #496057;
 
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 800;
+
         text-decoration: none;
 
         display: flex;
         align-items: center;
         justify-content: center;
+
+        border: 1px solid #dce8e3;
+
+        transition: 0.2s ease;
     }
 
     .cancel-btn:hover {
-        background: #e5e7eb;
+        background: #e8f1ed;
+        color: #315247;
+
+        transform: translateY(-1px);
     }
 
-    .tip-box {
-        margin-top: 25px;
+    /* =========================
+       MOBILE
+    ========================= */
 
-        padding: 17px 20px;
+    @media (max-width: 700px) {
 
-        border-radius: 14px;
-
-        background: #fffbeb;
-        border: 1px solid #fde68a;
-
-        color: #92400e;
-
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    @media (max-width: 650px) {
+        .create-page {
+            margin-top: 25px;
+            padding: 0 14px;
+        }
 
         .create-card {
-            padding: 24px 18px;
+            padding: 27px 19px;
+            border-radius: 19px;
         }
 
         .create-header h1 {
+            font-size: 29px;
+        }
+
+        .create-header p {
+            font-size: 13px;
+        }
+
+        .create-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
             font-size: 29px;
         }
 
@@ -259,24 +464,6 @@
         .cancel-btn {
             width: 100%;
         }
-    }
-
-    .project-form select[multiple] {
-        min-height: 150px;
-        padding: 10px;
-        background: #fff;
-        cursor: pointer;
-    }
-
-    .project-form select[multiple] option {
-        padding: 8px 10px;
-        margin: 3px 0;
-        border-radius: 6px;
-    }
-
-    .project-form select[multiple] option:checked {
-        background: #16a34a;
-        color: white;
     }
 </style>
 

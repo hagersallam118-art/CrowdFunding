@@ -14,36 +14,42 @@
         margin: 40px auto 70px;
         padding: 0 20px;
         font-family: Arial, sans-serif;
-        color: #1f2937;
+        color: #416f62;
     }
 
+    /* =========================
+       PROFILE HEADER
+    ========================= */
+
     .profile-header {
-        background: linear-gradient(135deg, #15803d, #22c55e);
+        background: linear-gradient(135deg, #347781, #369895);
         border-radius: 24px;
         padding: 35px;
         color: white;
         display: flex;
         align-items: center;
         gap: 25px;
-        box-shadow: 0 12px 35px rgba(0,0,0,0.10);
+        box-shadow: 0 14px 35px rgba(39, 93, 75, 0.14);
         margin-bottom: 30px;
     }
 
-    .profile-picture {
+    .profile-picture,
+    .profile-placeholder {
         width: 120px;
         height: 120px;
-        object-fit: cover;
+        flex-shrink: 0;
         border-radius: 50%;
-        border: 5px solid rgba(255,255,255,0.8);
+    }
+
+    .profile-picture {
+        object-fit: cover;
+        border: 5px solid rgba(255,255,255,0.85);
         background: white;
     }
 
     .profile-placeholder {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.2);
-        border: 5px solid rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.14);
+        border: 5px solid rgba(255,255,255,0.75);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -54,12 +60,18 @@
     .profile-header h1 {
         margin: 0 0 7px;
         font-size: 32px;
+        font-weight: 800;
     }
 
     .profile-header p {
-        margin: 4px 0;
-        opacity: 0.95;
+        margin: 5px 0;
+        color: rgba(255,255,255,0.88);
+        font-size: 14px;
     }
+
+    /* =========================
+       ACTION BUTTONS
+    ========================= */
 
     .profile-actions {
         margin-left: auto;
@@ -70,37 +82,55 @@
 
     .profile-btn {
         display: inline-block;
+        min-width: 125px;
         padding: 11px 18px;
         border-radius: 11px;
         font-weight: 700;
+        font-size: 13px;
         text-decoration: none;
         text-align: center;
+        transition: 0.25s ease;
     }
 
     .edit-btn {
         background: white;
-        color: #15803d;
+        color: #1d493e;
+    }
+
+    .edit-btn:hover {
+        background: #e8f5f0;
+        transform: translateY(-2px);
     }
 
     .delete-btn {
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.45);
         color: white;
     }
 
+    .delete-btn:hover {
+        background: rgba(255,255,255,0.18);
+        transform: translateY(-2px);
+    }
+
+    /* =========================
+       INFO CARD
+    ========================= */
+
     .info-card {
         background: white;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #dcece6;
         border-radius: 20px;
         padding: 28px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 30px rgba(39, 93, 75, 0.07);
         margin-bottom: 30px;
     }
 
     .section-title {
         margin: 0 0 22px;
-        font-size: 24px;
-        color: #111827;
+        font-size: 23px;
+        color: #1d493e;
+        font-weight: 800;
     }
 
     .info-grid {
@@ -110,105 +140,179 @@
     }
 
     .info-item {
-        background: #f9fafb;
+        background: #f8fcfa;
+        border: 1px solid #e1eee9;
         border-radius: 14px;
         padding: 16px;
+        transition: 0.2s ease;
+    }
+
+    .info-item:hover {
+        border-color: #c7e2d8;
+        transform: translateY(-2px);
     }
 
     .info-label {
-        color: #6b7280;
-        font-size: 13px;
-        margin-bottom: 5px;
+        color: #7a8c86;
+        font-size: 12px;
+        margin-bottom: 6px;
+        font-weight: 600;
     }
 
     .info-value {
-        color: #111827;
+        color: #29483f;
+        font-size: 14px;
         font-weight: 700;
         word-break: break-word;
     }
 
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
+    /* =========================
+   PROJECT CARDS
+========================= */
 
-    .project-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 17px;
-        overflow: hidden;
-        background: white;
-        transition: 0.2s;
-    }
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
 
-    .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
+.project-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #dcece6;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(39, 93, 75, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
 
-    .project-image {
-        height: 170px;
-        width: 100%;
-        object-fit: cover;
-        background: #f3f4f6;
-    }
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(39, 93, 75, 0.14);
+}
 
-    .no-image {
-        height: 170px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f3f4f6;
-        color: #9ca3af;
-    }
+.project-card .project-image,
+.project-card .no-image {
+    width: 100%;
+    height: 185px;
+    display: block;
+}
 
-    .card-content {
-        padding: 18px;
-    }
+.project-card .project-image {
+    object-fit: cover;
+    background: #dff3e9;
+    transition: transform 0.35s ease;
+}
 
-    .card-content h3 {
-        margin: 0 0 10px;
-        font-size: 18px;
-        color: #111827;
-    }
+.project-card:hover .project-image {
+    transform: scale(1.03);
+}
 
-    .card-content p {
-        color: #6b7280;
-        margin: 7px 0;
-    }
+.project-card .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e4f7f0, #b8e4d2);
+    color: #277253;
+    font-size: 18px;
+    font-weight: 800;
+}
 
-    .view-link {
-        display: inline-block;
-        margin-top: 10px;
-        color: #15803d;
-        font-weight: 700;
-        text-decoration: none;
-    }
+.project-card .card-content {
+    padding: 19px 19px 20px;
+    background: #fff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card .card-content h3 {
+    margin: 0 0 9px;
+    color: #1d4938;
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 800;
+}
+
+.project-card .card-content p {
+    margin: 7px 0;
+    color: #718078;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.project-card .card-content p strong {
+    color: #1d493e;
+    font-weight: 800;
+}
+
+.project-card .view-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #e3f6ee;
+    color: #25815b;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    transition: 0.22s ease;
+}
+
+.project-card .view-link:hover {
+    background: #bfe8d5;
+    color: #176143;
+    transform: translateY(-1px);
+}
+
+    /* =========================
+       DONATIONS
+    ========================= */
 
     .donation-card {
-        border: 1px solid #e5e7eb;
+        border: 1px solid #dcece6;
         border-radius: 16px;
         padding: 20px;
-        background: #f9fafb;
+        background: #f8fcfa;
+        transition: 0.2s ease;
+    }
+
+    .donation-card:hover {
+        border-color: #c7e2d8;
+        box-shadow: 0 7px 20px rgba(39, 93, 75, 0.06);
     }
 
     .donation-amount {
-        color: #15803d;
+        color: #2c8068;
         font-size: 23px;
         font-weight: 800;
         margin: 10px 0;
     }
 
+    /* =========================
+       EMPTY STATES
+    ========================= */
+
     .empty-box {
         text-align: center;
         padding: 35px;
-        background: #f9fafb;
-        color: #6b7280;
+        background: #f8fcfa;
+        border: 1px dashed #cfe3dc;
+        color: #7a8c86;
         border-radius: 15px;
         grid-column: 1 / -1;
+        font-size: 14px;
     }
 
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
     @media (max-width: 850px) {
+
         .cards-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -222,12 +326,21 @@
             margin-left: 0;
             width: 100%;
         }
+
+        .profile-btn {
+            width: 100%;
+        }
     }
 
     @media (max-width: 600px) {
+
         .cards-grid,
         .info-grid {
             grid-template-columns: 1fr;
+        }
+
+        .profile-page {
+            padding: 0 15px;
         }
 
         .profile-header {
@@ -236,6 +349,16 @@
 
         .profile-header h1 {
             font-size: 26px;
+        }
+
+        .profile-picture,
+        .profile-placeholder {
+            width: 100px;
+            height: 100px;
+        }
+
+        .info-card {
+            padding: 22px 18px;
         }
     }
 </style>
@@ -341,55 +464,87 @@
 
         <div class="cards-grid">
 
-            {% for project in my_projects %}
+          {% for project in my_projects %}
 
-                <div class="project-card">
+    <div class="project-card">
 
-                    {% with first_image=project.images.first %}
+        {% with first_image=project.images.first %}
 
-                        {% if first_image %}
-                            <img
-                                src="{{ first_image.image.url }}"
-                                class="project-image"
-                                alt="{{ project.title }}">
-                        {% else %}
-                            <div class="no-image">
-                                No Image
-                            </div>
-                        {% endif %}
-
-                    {% endwith %}
-
-                    <div class="card-content">
-
-                        <h3>
-                            {{ project.title }}
-                        </h3>
-
-                        <p>
-                            Target:
-                            <strong>
-                                {{ project.target|floatformat:0 }} EGP
-                            </strong>
-                        </p>
-
-                        <a
-                            href="{% url 'project_detail' project.pk %}"
-                            class="view-link">
-                            View Project →
-                        </a>
-
-                    </div>
-
+            {% if first_image %}
+                <img
+                    src="{{ first_image.image.url }}"
+                    class="project-image"
+                    alt="{{ project.title }}">
+            {% else %}
+                <div class="no-image">
+                    CrowdFunding
                 </div>
+            {% endif %}
 
-            {% empty %}
+        {% endwith %}
 
-                <div class="empty-box">
-                    You haven't created any projects yet.
+        <div class="card-content">
+
+            <h3>{{ project.title }}</h3>
+
+            <p>
+                {{ project.details|truncatechars:90 }}
+            </p>
+
+            <div class="donation-info">
+
+                <span>
+                    Raised:
+                    <strong>
+                        {{ project.total_donations|default:0 }} EGP
+                    </strong>
+                </span>
+
+                <span>
+                    Target:
+                    <strong>
+                        {{ project.target }} EGP
+                    </strong>
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+                <div
+                    class="progress-fill"
+                    style="width: {{ project.progress|default:0 }}%;">
                 </div>
+            </div>
 
-            {% endfor %}
+            <div class="card-bottom">
+
+                <span class="rating">
+                    ★ {{ project.rating|default:0|floatformat:1 }}
+                </span>
+
+                <span class="progress-percent">
+                    {{ project.progress|default:0|floatformat:0 }}%
+                </span>
+
+            </div>
+
+            <a
+                href="{% url 'project_detail' project.pk %}"
+                class="view-link">
+                View Project →
+            </a>
+
+        </div>
+
+    </div>
+
+{% empty %}
+
+    <div class="empty-box">
+        You haven't created any projects yet.
+    </div>
+
+{% endfor %}  
 
         </div>
 
@@ -407,35 +562,54 @@
 
             {% for donation in my_donations %}
 
-                <div class="donation-card">
+<div class="project-card">
 
-                    <h3>
-                        {{ donation.project.title }}
-                    </h3>
+    {% with first_image=donation.project.images.first %}
 
-                    <div class="donation-amount">
-                        {{ donation.amount|floatformat:0 }} EGP
-                    </div>
+        {% if first_image %}
+            <img
+                src="{{ first_image.image.url }}"
+                class="project-image"
+                alt="{{ donation.project.title }}">
+        {% else %}
+            <div class="no-image">
+                CrowdFunding
+            </div>
+        {% endif %}
 
-                    <p style="color:#6b7280;">
-                        Donation
-                    </p>
+    {% endwith %}
 
-                    <a
-                        href="{% url 'project_detail' donation.project.pk %}"
-                        class="view-link">
-                        View Project →
-                    </a>
+    <div class="card-content">
 
-                </div>
+        <h3>
+            {{ donation.project.title }}
+        </h3>
 
-            {% empty %}
+        <p>
+            Your donation:
+        </p>
 
-                <div class="empty-box">
-                    You haven't made any donations yet.
-                </div>
+        <div class="donation-amount">
+            {{ donation.amount|floatformat:0 }} EGP
+        </div>
 
-            {% endfor %}
+        <a
+            href="{% url 'project_detail' donation.project.pk %}"
+            class="view-link">
+            View Project →
+        </a>
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<div class="empty-box">
+    You haven't made any donations yet.
+</div>
+
+{% endfor %}
 
         </div>
 

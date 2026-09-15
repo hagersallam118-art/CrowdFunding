@@ -1,1 +1,193 @@
-{% extends "base.html" %}{% block content %}<h1>Edit Profile</h1><p><strong>Email:</strong> {{ request.user.email }} <span class="muted">(cannot be changed)</span></p><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button type="submit">Save Changes</button></form><p><a href="{% url 'profile' %}">Back to profile</a></p>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+
+<style>
+.edit-profile-page {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+}
+
+.edit-profile-card {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    padding: 38px 35px;
+    border-radius: 22px;
+    border: 1px solid #dcece6;
+    box-shadow: 0 15px 40px rgba(39, 93, 75, 0.10);
+}
+
+.edit-profile-card h1 {
+    margin: 0 0 8px;
+    text-align: center;
+    color: #1d493e;
+    font-size: 30px;
+}
+
+.edit-subtitle {
+    text-align: center;
+    color: #7a8c86;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.email-box {
+    background: #f1f8f5;
+    border: 1px solid #dcece6;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 25px;
+    color: #31564c;
+    font-size: 14px;
+}
+
+.muted {
+    color: #8a9b95;
+    font-size: 12px;
+}
+
+.edit-profile-form p {
+    margin-bottom: 17px;
+}
+
+.edit-profile-form label {
+    display: block;
+    margin-bottom: 7px;
+    color: #31564c;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.edit-profile-form input,
+.edit-profile-form select,
+.edit-profile-form textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #d7e6e0;
+    border-radius: 10px;
+    background: #fafdfc;
+    color: #374740;
+    font-size: 14px;
+    outline: none;
+    transition: .2s;
+}
+
+.edit-profile-form input:focus,
+.edit-profile-form select:focus,
+.edit-profile-form textarea:focus {
+    border-color: #45b995;
+    box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.12);
+}
+
+.edit-profile-form input[type="file"] {
+    padding: 9px;
+    background: #fff;
+}
+
+.edit-profile-form button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    border: none;
+    border-radius: 11px;
+    background: #45b995;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.edit-profile-form button:hover {
+    background: #319b7d;
+    transform: translateY(-1px);
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #2c8068;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.edit-profile-form .helptext {
+    display: block;
+    margin-top: 5px;
+    color: #8a9b95;
+    font-size: 11px;
+}
+
+.edit-profile-form ul.errorlist {
+    color: #b23a3a;
+    font-size: 12px;
+    margin: 5px 0 8px;
+    padding-left: 18px;
+}
+
+@media (max-width: 600px) {
+    .edit-profile-page {
+        padding: 30px 15px;
+    }
+
+    .edit-profile-card {
+        padding: 30px 22px;
+    }
+
+    .edit-profile-card h1 {
+        font-size: 26px;
+    }
+}
+</style>
+
+<div class="edit-profile-page">
+
+    <div class="edit-profile-card">
+
+        <h1>Edit Profile</h1>
+
+        <p class="edit-subtitle">
+            Update your personal information
+        </p>
+
+        <div class="email-box">
+            <strong>Email:</strong>
+            {{ request.user.email }}
+            <span class="muted">(cannot be changed)</span>
+        </div>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              class="edit-profile-form">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Save Changes
+            </button>
+
+        </form>
+
+        <a href="{% url 'profile' %}" class="back-link">
+            ← Back to Profile
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,96 +1,285 @@
 {% extends 'base.html' %}
-
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}">
+{% endblock %}
 {% block content %}
 
 <style>
+    /* =====================================================
+       GENERAL
+    ===================================================== */
+
     * {
         box-sizing: border-box;
     }
 
     body {
-        background: #ffffff;
-        color: #222;
+        background: #f4faf8;
+        color: #1f2937;
     }
 
     .home-container {
+        width: 100%;
         max-width: 1200px;
         margin: auto;
-        padding: 0 24px 60px;
+        padding: 0 24px 70px;
     }
 
-    /* HERO */
 
+    /* =====================================================
+       HERO
+    ===================================================== */
     .hero {
-        text-align: center;
-        padding: 65px 20px 45px;
+        position: relative;
+        overflow: hidden;
+        padding: 45px 30px 60px;
+
+        background:
+        /* linear-gradient(90deg,
+            rgba(22, 120, 105, 0.72),
+            rgba(22, 120, 105, 0.38)), */
+        url("{% static 'images/hero-bg.jpg' %}");
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        top: -180px;
+        right: -100px;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        left: -5%;
+        bottom: -45px;
+        width: 110%;
+        height: 75px;
+        background: #f8fafc;
+        border-radius: 50% 50% 0 0;
+        box-shadow: 0 -10px 22px rgba(0, 0, 0, 0.10);
+        z-index: 5;
+    }
+
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+
+        width: calc(100% - 48px);
+        max-width: 1140px;
+
+        min-height: 535px;
+
+        margin: auto;
+
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr);
+
+        gap: 55px;
+
+        align-items: center;
+    }
+
+
+    /* =====================================================
+       HERO TEXT
+    ===================================================== */
+
+    .hero-text {
+        padding: 30px 0;
+    }
+
+    .hero-label {
+        display: inline-block;
+        margin-bottom: 12px;
+
+        color: #537f71;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        letter-spacing: 3px;
     }
 
     .hero h1 {
-        font-size: 52px;
-        line-height: 1.08;
-        margin: 0 auto 20px;
-        max-width: 750px;
-        font-weight: 800;
+        max-width: 620px;
+
+        margin: 0 0 14px;
+
+        color: #419481;
+
+        font-size: 46px;
+        line-height: 1.1;
+
+        letter-spacing: -1.2px;
+
+        font-weight: 850;
+
+        text-shadow: 0 3px 15px rgba(0, 40, 35, 0.18);
+    }
+
+    .hero h1 span {
+        display: block;
+ color: #022319;
+        
     }
 
     .hero p {
-        font-size: 19px;
-        color: #666;
-        max-width: 650px;
-        margin: 0 auto 28px;
+        max-width: 500px;
+
+        margin: 0 0 21px;
+
+        color: rgba(54, 116, 103, 0.88);
+
+        font-size: 15px;
+        line-height: 1.6;
     }
 
     .hero-btn {
         display: inline-block;
-        background: #167a4a;
-        color: white;
-        padding: 15px 28px;
-        border-radius: 30px;
+
+        padding: 11px 22px;
+
+        border-radius: 22px;
+
+        background: #79c6b2;
+        color: #15564d;
+
         text-decoration: none;
-        font-weight: bold;
+
+        font-size: 13px;
+        font-weight: 800;
+
+        box-shadow: 0 7px 18px rgba(0, 0, 0, 0.14);
+
+        transition: 0.25s ease;
     }
 
     .hero-btn:hover {
-        background: #0f623a;
+        background: #b0f2e1;
+        color: #15564d;
+
+        transform: translateY(-2px);
     }
 
-    /* SEARCH */
+    /* =====================================================
+       SEARCH
+    ===================================================== */
 
     .search-box {
-        max-width: 900px;
-        margin: 0 auto 25px;
+        width: 100%;
+        max-width: 550px;
+        margin: 22px 0 15px;
+        padding: 5px;
+
         display: flex;
-        border: 1px solid #ddd;
+        align-items: center;
+
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(255, 255, 255, 0.55);
         border-radius: 16px;
-        overflow: hidden;
-        background: white;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+
+        box-shadow: 0 10px 28px rgba(0, 45, 40, 0.16);
+        backdrop-filter: blur(12px);
+    }
+
+    .search-icon {
+        width: 43px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #42aa98;
+
+        font-size: 23px;
+        font-weight: bold;
     }
 
     .search-box input {
         flex: 1;
+
+        width: auto;
+
         border: none;
         outline: none;
-        padding: 18px 20px;
-        font-size: 17px;
+
+        background: transparent;
+
+        padding: 13px 7px;
+
+        color: #315c62;
+
+        font-size: 13px;
+    }
+
+    .search-box input::placeholder {
+        color: #81969a;
     }
 
     .search-box button {
+        width: auto;
+
         border: none;
-        background: #167a4a;
+        outline: none;
+
+        padding: 12px 23px;
+
+        border-radius: 13px;
+
+        background: linear-gradient(135deg,
+                #4bc8a5,
+                #31a88a);
+
         color: white;
-        padding: 0 28px;
-        font-weight: bold;
+
+        font-size: 13px;
+        font-weight: 800;
+
         cursor: pointer;
+
+        transition: 0.2s ease;
     }
 
-    /* CATEGORIES */
+    .search-box button:hover {
+        background: #269c80;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =====================================================
+       CATEGORIES
+    ===================================================== */
+    .categories-title {
+        margin: 24px 0 14px;
+        color: #38605d;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+    }
 
     .categories-scroll {
         display: flex;
-        gap: 12px;
+
+        gap: 9px;
+
+        width: 100%;
+
         overflow-x: auto;
-        padding: 15px 0 35px;
+
+        padding: 4px 0 5px;
+
         scrollbar-width: none;
     }
 
@@ -99,159 +288,545 @@
     }
 
     .category-pill {
-        flex: 0 0 auto;
+        flex: 0 0 92px;
+        width: 92px;
+        height: 76px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+
+        padding: 9px 6px;
+        border-radius: 15px;
+
+        text-align: center;
         text-decoration: none;
-        color: #222;
-        background: #f5f5f5;
-        padding: 11px 18px;
-        border-radius: 25px;
-        font-weight: 600;
-        border: 1px solid #eee;
+        color: #ffffff;
+
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+
+        box-shadow: 0 7px 20px rgba(0, 45, 40, 0.14);
+        backdrop-filter: blur(10px);
+
+        font-size: 11px;
+        font-weight: 800;
+
+        transition: 0.22s ease;
     }
 
     .category-pill:hover {
-        background: #e9f5ef;
-        color: #167a4a;
+        background: rgba(255, 255, 255, 0.23);
+        border-color: rgba(255, 255, 255, 0.38);
+        transform: translateY(-3px);
     }
 
-    /* TITLES */
+    .category-icon {
+        font-size: 24px;
+        line-height: 1;
+    }
 
-    .section-title {
-        font-size: 30px;
-        margin: 45px 0 20px;
+
+
+    /* =====================================================
+       HERO PROJECT CARD
+    ===================================================== */
+
+    .hero-project {
+        width: 100%;
+
+        overflow: hidden;
+
+        border-radius: 22px;
+
+        background: rgba(255, 255, 255, 0.96);
+
+        border: 1px solid rgba(255, 255, 255, 0.65);
+
+        box-shadow:
+            0 22px 50px rgba(0, 40, 50, 0.25);
+    }
+
+    .hero-project>img,
+    .hero-project-image {
+        width: 100%;
+        height: 210px;
+
+        display: block;
+
+        object-fit: cover;
+    }
+
+    .hero-project-image {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        background:
+            linear-gradient(135deg,
+                #d8f2e9,
+                #9edbc5);
+
+        color: #27745d;
+
+        font-size: 20px;
         font-weight: 800;
     }
 
-    /* PROJECT GRID */
+    .hero-project-content {
+        padding: 19px 20px 20px;
+    }
+
+    .featured-badge {
+        display: inline-block;
+
+        margin-bottom: 9px;
+
+        padding: 5px 10px;
+
+        border-radius: 20px;
+
+        background: #dff7ee;
+
+        color: #287c62;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .hero-project-content h3 {
+        margin: 0 0 7px;
+
+        color: #19483e;
+
+        font-size: 20px;
+        line-height: 1.25;
+    }
+
+    .hero-project-content p {
+        margin: 0 0 13px;
+
+        color: #70817c;
+
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .hero-project-info {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 13px;
+    }
+
+    .hero-project-info strong {
+        color: #168766;
+
+        font-size: 17px;
+    }
+
+    .hero-project-info span {
+        color: #71837d;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .hero-project-btn {
+        display: block;
+
+        width: 100%;
+
+        padding: 10px;
+
+        border-radius: 11px;
+
+        background: #46ba96;
+
+        color: white;
+
+        text-align: center;
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 800;
+
+        transition: 0.2s ease;
+    }
+
+    .hero-project-btn:hover {
+        background: #309f7c;
+    }
+
+    .hero-empty {
+        padding: 55px 25px;
+
+        text-align: center;
+
+        color: #52736b;
+    }
+
+
+    /* =====================================================
+       SEARCH RESULTS
+    ===================================================== */
+
+    .search-results {
+        margin-top: 38px;
+
+        padding: 25px;
+
+        background: white;
+
+        border: 1px solid #e2eee9;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 8px 25px rgba(35, 91, 73, 0.06);
+    }
+
+
+    /* =====================================================
+       SECTION TITLES
+    ===================================================== */
+
+    .section-title {
+        margin: 48px 0 20px;
+
+        color: #1d493e;
+
+        font-size: 27px;
+        line-height: 1.2;
+
+        font-weight: 800;
+    }
+
+
+    /* =====================================================
+       PROJECT GRID
+    ===================================================== */
 
     .project-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
         gap: 22px;
     }
 
+
+    /* =====================================================
+       PROJECT CARDS
+    ===================================================== */
+
     .project-card {
-        border: 1px solid #e5e5e5;
-        border-radius: 18px;
         overflow: hidden;
-        background: white;
-        transition: .2s;
+        background: #ffffff;
+        border: 1px solid #dcece6;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(39, 93, 75, 0.07);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+        transform: translateY(-5px);
+        box-shadow: 0 16px 35px rgba(39, 93, 75, 0.14);
     }
 
+
+    /* =====================================================
+       PROJECT IMAGE
+    ===================================================== */
     .project-image {
         width: 100%;
-        height: 210px;
+        height: 185px;
+        display: block;
         object-fit: cover;
-        background: #eee;
+        background: #dff3e9;
+        transition: transform 0.35s ease;
+    }
+
+    .project-card:hover .project-image {
+        transform: scale(1.03);
     }
 
     .no-image {
-        height: 210px;
-        background: linear-gradient(135deg,
-                #dff4e8,
-                #b8e3cb);
+        width: 100%;
+        height: 185px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
-        font-weight: bold;
-        color: #167a4a;
+        background: linear-gradient(135deg, #e4f7f0, #b8e4d2);
+        color: #277253;
+        font-size: 18px;
+        font-weight: 800;
     }
 
+    /* =====================================================
+       CARD CONTENT
+    ===================================================== */
+
     .project-content {
-        padding: 18px;
+        padding: 19px 19px 20px;
+        background: #ffffff;
     }
 
     .project-content h3 {
-        margin: 0 0 10px;
-        font-size: 20px;
+        margin: 0 0 9px;
+        color: #1d4938;
+        font-size: 18px;
+        line-height: 1.35;
+        font-weight: 800;
     }
 
     .project-content p {
-        color: #666;
-        line-height: 1.5;
         margin: 7px 0;
+        color: #718078;
+        font-size: 13px;
+        line-height: 1.55;
     }
 
     .rating {
-        color: #167a4a !important;
-        font-weight: bold;
+        color: #35a77f !important;
+        font-weight: 800 !important;
     }
 
-    .view-btn {
-        display: inline-block;
-        margin-top: 12px;
-        color: #167a4a;
+
+    /* =====================================================
+       RATING
+    ===================================================== */
+
+    .rating {
+        color: #38a878 !important;
+
+        font-weight: 800 !important;
+    }
+
+    .donation-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 14px 0 8px;
+        color: #74857f;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .donation-info strong {
+        display: block;
+        margin-top: 3px;
+        color: #1d493e;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 7px;
+        margin: 6px 0 12px;
+        overflow: hidden;
+        background: #e4f1ec;
+        border-radius: 20px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        min-width: 0;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #4bc8a5, #2fa987);
+        transition: width 0.4s ease;
+    }
+
+    .card-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+    }
+
+    .card-bottom .rating {
+        margin: 0;
+        color: #e0a43a !important;
+        font-size: 12px;
+    }
+
+    .progress-percent {
+        color: #319b7d;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .card-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .card-buttons .donate-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: #45b995;
+        color: white;
         text-decoration: none;
-        font-weight: bold;
+        font-size: 12px;
+        font-weight: 800;
+        transition: 0.22s ease;
     }
 
-    /* TOP PROJECTS SLIDER */
+    .card-buttons .donate-btn:hover {
+        background: #309f7c;
+        transform: translateY(-1px);
+    }
+
+    .card-buttons .view-btn {
+        flex: 1;
+        margin-top: 0;
+        justify-content: center;
+    }
+
+    /* =====================================================
+       VIEW BUTTON
+    ===================================================== */
+    .view-btn {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 11px;
+        padding: 9px 15px;
+        border-radius: 10px;
+        background: #e3f6ee;
+        color: #25815b;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 800;
+        transition: 0.22s ease;
+    }
+
+    .view-btn:hover {
+        background: #bfe8d5;
+        color: #176143;
+        transform: translateY(-1px);
+    }
+
+
+
+    /* =====================================================
+       TOP RATED SLIDER
+    ===================================================== */
 
     .project-slider {
         display: flex;
-        gap: 20px;
+
+        gap: 18px;
+
         overflow-x: auto;
+
         scroll-behavior: smooth;
-        padding: 5px 2px 18px;
+
+        padding: 4px 2px 18px;
+
         scrollbar-width: thin;
     }
 
     .project-slider .project-card {
-        min-width: 330px;
-        max-width: 330px;
+        min-width: 350px;
+        max-width: 350px;
+
         flex: 0 0 auto;
     }
 
-    /* SEARCH RESULT */
 
-    .search-results {
-        background: #f8faf9;
-        padding: 25px;
-        border-radius: 20px;
-        margin-top: 30px;
-    }
-
-    /* MOBILE */
+    /* =====================================================
+       MOBILE
+    ===================================================== */
 
     @media (max-width: 900px) {
+
+        .hero {
+            min-height: auto;
+        }
+
+        .hero-content {
+            grid-template-columns: 1fr;
+
+            gap: 30px;
+
+            padding-top: 45px;
+            padding-bottom: 70px;
+        }
+
+        .hero-text {
+            padding: 0;
+        }
+
+        .hero-project {
+            max-width: 520px;
+
+            width: 100%;
+
+            margin: auto;
+        }
+
         .project-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
         }
 
         .hero h1 {
-            font-size: 40px;
+            font-size: 42px;
         }
     }
 
+
     @media (max-width: 600px) {
+
         .home-container {
-            padding: 0 15px 40px;
+            padding: 0 15px 45px;
         }
 
-        .hero {
-            padding: 45px 10px 30px;
+        .hero-content {
+            width: calc(100% - 30px);
+
+            padding-top: 35px;
+            padding-bottom: 55px;
         }
 
         .hero h1 {
-            font-size: 36px;
+            font-size: 35px;
         }
 
         .hero p {
-            font-size: 16px;
+            font-size: 15px;
+        }
+
+        .search-box {
+            max-width: 100%;
         }
 
         .search-box input {
-            padding: 15px;
+            min-width: 0;
+
+            padding: 12px 5px;
         }
 
         .search-box button {
-            padding: 0 18px;
+            padding: 11px 15px;
+        }
+
+        .category-pill {
+            flex-basis: 76px;
+
+            width: 76px;
         }
 
         .project-grid {
@@ -259,71 +834,526 @@
         }
 
         .project-slider .project-card {
-            min-width: 85%;
-            max-width: 85%;
+            min-width: 84%;
+            max-width: 84%;
         }
 
         .section-title {
-            font-size: 26px;
+            font-size: 24px;
         }
+    }
+
+    /* =====================================================
+   HERO PROJECT CARD
+===================================================== */
+
+    .hero-project {
+        width: 100%;
+        max-width: 380px;
+        /* كانت 350px */
+        overflow: hidden;
+        border-radius: 18px;
+
+        background: #e8f3ef;
+        border: 1px solid #c7ded6;
+
+        box-shadow:
+            0 12px 30px rgba(39, 93, 75, 0.12),
+            0 4px 10px rgba(39, 93, 75, 0.06);
+
+        transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .hero-project:hover {
+        transform: translateY(-5px);
+
+        box-shadow:
+            0 18px 40px rgba(39, 93, 75, 0.16),
+            0 6px 14px rgba(39, 93, 75, 0.08);
+    }
+
+
+    /* =========================
+   IMAGE
+========================= */
+
+    .hero-project>img {
+        width: 100%;
+        height: 185px;
+
+        display: block;
+
+        object-fit: cover;
+
+        filter: brightness(0.62);
+    }
+
+
+    /* =========================
+   NO IMAGE
+========================= */
+
+    .hero-project .no-image {
+        width: 100%;
+        height: 185px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(135deg,
+                #d8eee7,
+                #b9dbcf);
+
+        color: #317361;
+
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+
+    /* =========================
+   CONTENT
+========================= */
+
+    .hero-project .project-content {
+        padding: 17px 17px 18px;
+
+        background: #e8f3ef;
+    }
+
+
+    /* =========================
+   BADGE
+========================= */
+
+    .hero-project .featured-badge {
+        display: inline-flex;
+        align-items: center;
+
+        margin-bottom: 8px;
+
+        padding: 4px 8px;
+
+        border-radius: 7px;
+
+        background: #d1e9e1;
+        color: #32745f;
+
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+
+    /* =========================
+   TITLE
+========================= */
+
+    .hero-project .project-content h3 {
+        margin: 0 0 8px;
+
+        color: #1e4e41;
+
+        font-size: 19px;
+        line-height: 1.3;
+
+        font-weight: 800;
+
+        text-shadow: none;
+    }
+
+
+    /* =========================
+   DESCRIPTION
+========================= */
+
+    .hero-project .project-content p {
+        margin: 0 0 13px;
+
+        color: #6b7f78;
+
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================
+   DONATION
+========================= */
+
+    .hero-project .donation-info {
+        margin: 12px 0 8px;
+
+        color: #71847d;
+    }
+
+    .hero-project .donation-info strong {
+        color: #285d4d;
+    }
+
+
+    /* =========================
+   PROGRESS
+========================= */
+
+    .hero-project .progress-bar {
+        height: 6px;
+
+        margin: 5px 0 10px;
+
+        background: #d3e7e0;
+    }
+
+    .hero-project .progress-fill {
+        background: linear-gradient(90deg,
+                #62bea2,
+                #43a687);
+    }
+
+
+    /* =========================
+   RATING
+========================= */
+
+    .hero-project .card-bottom {
+        margin-bottom: 11px;
+    }
+
+    .hero-project .card-bottom .rating {
+        color: #c7953d !important;
+    }
+
+
+    /* =========================
+   BUTTONS
+========================= */
+
+    .hero-project .card-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .hero-project .card-buttons .donate-btn,
+    .hero-project .card-buttons .view-btn {
+        flex: 1;
+
+        min-height: 38px;
+
+        margin: 0;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 9px;
+
+        border-radius: 9px;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+
+    /* Donate */
+
+    .hero-project .card-buttons .donate-btn {
+        background: #55b99b;
+        color: #ffffff;
+    }
+
+    .hero-project .card-buttons .donate-btn:hover {
+        background: #45a989;
+    }
+
+
+    /* View */
+
+    .hero-project .card-buttons .view-btn {
+        background: #d3eae2;
+        color: #2b705d;
+    }
+
+    .hero-project .card-buttons .view-btn:hover {
+        background: #c3e2d9;
+    }
+
+
+    /* =========================
+   EMPTY
+========================= */
+
+    .hero-empty {
+        padding: 35px 22px;
+
+        text-align: center;
+
+        background: #e8f3ef;
+
+        color: #52736b;
+    }
+
+    /* ===============================
+   EQUAL PROJECT CARD HEIGHT
+================================ */
+
+    .project-grid .project-card,
+    .project-slider .project-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-grid .project-card .project-content,
+    .project-slider .project-card .project-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-grid .project-card .card-buttons,
+    .project-slider .project-card .card-buttons {
+        margin-top: auto;
     }
 </style>
 
 
-<div class="home-container">
+<!-- =====================================================
+     HERO
+===================================================== -->
 
-    <!-- HERO -->
+<section class="hero">
 
-    <section class="hero">
-
-        <h1>
-            Turn your ideas into reality.
-        </h1>
-
-        <p>
-            Discover inspiring projects or start your own
-            fundraising campaign and make a difference.
-        </p>
-
-        {% if user.is_authenticated %}
-        <a href="{% url 'project_create' %}" class="hero-btn">
-            Start a Project
-        </a>
-        {% else %}
-        <a href="{% url 'register' %}" class="hero-btn">
-            Start Fundraising
-        </a>
-        {% endif %}
-
-    </section>
+    <div class="hero-content">
 
 
-    <!-- SEARCH -->
+        <!-- =================================================
+             LEFT SIDE
+        ================================================= -->
 
-    <form method="GET" class="search-box">
+        <div class="hero-text">
 
-        <input type="text" name="q" value="{{ query }}" placeholder="Search projects, titles or tags">
+            <span class="hero-label">
+                TOGETHER WE CAN
+            </span>
 
-        <button type="submit">
-            Search
-        </button>
+            <h1>
+                Support Ideas,
+                <span>Create Real Change</span>
+            </h1>
 
-    </form>
+            <p>
+                Support meaningful projects, help people in need,
+                and be part of a better tomorrow.
+            </p>
 
 
-    <!-- CATEGORIES -->
+            {% if user.is_authenticated %}
 
-    <div class="categories-scroll">
+            <a href="{% url 'project_create' %}" class="hero-btn">
+                Start a Project
+            </a>
 
-        {% for category in categories %}
+            {% else %}
 
-        <a class="category-pill" href="{% url 'category_detail' category.id %}">
-            {{ category.name }}
-        </a>
+            <a href="{% url 'register' %}" class="hero-btn">
+                Start Fundraising
+            </a>
 
-        {% endfor %}
+            {% endif %}
+
+
+            <!-- SEARCH -->
+
+            <form method="GET" class="search-box">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by project title or tag...">
+
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+
+            <!-- CATEGORIES -->
+            <h2 class="categories-title">Categories</h2>
+
+            <div class="categories-scroll">
+
+                {% for category in categories %}
+
+                <a class="category-pill" href="{% url 'category_detail' category.id %}">
+
+                    <span class="category-icon">
+
+                        {% if forloop.counter == 1 %}
+                        💻
+                        {% elif forloop.counter == 2 %}
+                        ♥
+                        {% elif forloop.counter == 3 %}
+                        🎓
+                        {% elif forloop.counter == 4 %}
+                        ♥
+                        {% elif forloop.counter == 5 %}
+                        🌿
+                        {% elif forloop.counter == 6 %}
+                        💧
+                        {% else %}
+                        ✦
+                        {% endif %}
+
+                    </span>
+
+
+                    <span>
+                        {{ category.name }}
+                    </span>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT SIDE - HERO PROJECT
+        ================================================= -->
+
+        <!-- =================================================
+     RIGHT SIDE - HERO PROJECT
+================================================= -->
+
+        <div class="hero-project project-card">
+
+            {% with hero_project=top_projects|first %}
+
+            {% if hero_project %}
+
+            {% with first_image=hero_project.images.first %}
+
+            {% if first_image %}
+
+            <img class="project-image" src="{{ first_image.image.url }}" alt="{{ hero_project.title }}">
+
+            {% else %}
+
+            <div class="no-image">
+                Top Rated
+            </div>
+
+            {% endif %}
+
+            {% endwith %}
+
+
+            <div class="project-content">
+
+                <span class="featured-badge">
+                    ★ Top Rated
+                </span>
+
+                <h3>
+                    {{ hero_project.title }}
+                </h3>
+
+                <p>
+                    {{ hero_project.details|truncatechars:90 }}
+                </p>
+
+
+                <div class="donation-info">
+
+                    <span>
+                        Raised:
+                        <strong>
+                            {{ hero_project.total_donations }} EGP
+                        </strong>
+                    </span>
+
+                    <span>
+                        Target:
+                        <strong>
+                            {{ hero_project.target }} EGP
+                        </strong>
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill" style="width: {{ hero_project.progress }}%;">
+                    </div>
+
+                </div>
+
+
+                <div class="card-bottom">
+
+                    <span class="rating">
+                        ★ {{ hero_project.avg_rating|default:0|floatformat:1 }}
+                    </span>
+
+                    <span class="progress-percent">
+                        {{ hero_project.progress|floatformat:0 }}%
+                    </span>
+
+                </div>
+
+
+                <div class="card-buttons">
+
+                    <a class="donate-btn" href="{% url 'donate' hero_project.pk %}">
+                        Donate
+                    </a>
+
+                    <a class="view-btn" href="{% url 'project_detail' hero_project.pk %}">
+                        View Project
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="hero-empty">
+
+                <strong>
+                    Start making an impact.
+                </strong>
+
+                <p>
+                    Discover projects and support meaningful ideas.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+            {% endwith %}
+
+        </div>
 
     </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     REST OF PAGE
+===================================================== -->
+
+<div class="home-container">
 
 
     <!-- SEARCH RESULTS -->
@@ -335,6 +1365,7 @@
         <h2 class="section-title">
             Search Results
         </h2>
+
 
         <div class="project-grid">
 
@@ -358,13 +1389,18 @@
 
                 {% endwith %}
 
+
                 <div class="project-content">
 
-                    <h3>{{ project.title }}</h3>
+                    <h3>
+                        {{ project.title }}
+                    </h3>
+
 
                     <p>
                         {{ project.details|truncatechars:100 }}
                     </p>
+
 
                     <a class="view-btn" href="{% url 'project_detail' project.pk %}">
                         View Project →
@@ -376,7 +1412,9 @@
 
             {% empty %}
 
-            <p>No projects found.</p>
+            <p>
+                No projects found.
+            </p>
 
             {% endfor %}
 
@@ -387,186 +1425,235 @@
     {% endif %}
 
 
+
     <!-- TOP RATED -->
 
     <h2 class="section-title">
         Top Rated Projects
     </h2>
-    
+
 
     <div class="project-slider">
 
         {% for project in top_projects %}
 
+        <div class="project-card">
 
-            <div class="project-card">
+            {% with first_image=project.images.first %}
 
-                {% with first_image=project.images.first %}
+            {% if first_image %}
 
-                {% if first_image %}
+            <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
 
-                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
+            {% else %}
 
-                {% else %}
+            <div class="no-image">
+                CrowdFunding
+            </div>
 
-                <div class="no-image">
-                    CrowdFunding
-                </div>
+            {% endif %}
 
-                {% endif %}
+            {% endwith %}
 
-                {% endwith %}
 
-                <div class="project-content">
+            <div class="project-content">
+                <h3>{{ project.title }}</h3>
 
-                    <h3>
-                        {{ project.title }}
-                    </h3>
+                <p>{{ project.details|truncatechars:90 }}</p>
 
-                    <p class="rating">
-                        ★ {{ project.avg_rating|default:0|floatformat:1 }}/5
-                    </p>
+                <div class="donation-info">
+                    <span>
+                        Raised:
+                        <strong>{{ project.total_donations }} EGP</strong>
+                    </span>
 
-                    <p>
+                    <span>
                         Target:
-                        {{ project.target }} EGP
-                    </p>
-
-                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
-                        View Project →
-                    </a>
-
+                        <strong>{{ project.target }} EGP</strong>
+                    </span>
                 </div>
 
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ project.progress }}%;"></div>
+                </div>
+
+                <div class="card-bottom">
+                    <span class="rating">
+                        ★ {{ project.avg_rating|default:0|floatformat:1 }}
+                    </span>
+
+                    <span class="progress-percent">
+                        {{ project.progress|floatformat:0 }}%
+                    </span>
+                </div>
+
+                <div class="card-buttons">
+                    <a class="donate-btn" href="{% url 'donate' project.pk %}">
+                        Donate
+                    </a>
+
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project
+                    </a>
+                </div>
             </div>
-
-            {% empty %}
-
-            <p>No running projects.</p>
-
-            {% endfor %}
 
         </div>
 
+        {% empty %}
 
-        <!-- FEATURED -->
+        <p>
+            No running projects.
+        </p>
 
-        <h2 class="section-title">
-            Featured Projects
-        </h2>
-
-        <div class="project-grid">
-
-            {% for project in featured_projects %}
-
-            <div class="project-card">
-
-                {% with first_image=project.images.first %}
-
-                {% if first_image %}
-
-                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
-
-                {% else %}
-
-                <div class="no-image">
-                    Featured
-                </div>
-
-                {% endif %}
-
-                {% endwith %}
-
-                <div class="project-content">
-
-                    <h3>
-                        {{ project.title }}
-                    </h3>
-
-                    <p>
-                        {{ project.details|truncatechars:110 }}
-                    </p>
-
-                    <p class="rating">
-                        ★ {{ project.avg_rating|default:0|floatformat:1 }}/5
-                    </p>
-
-                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-            {% empty %}
-
-            <p>No featured projects.</p>
-
-            {% endfor %}
-
-        </div>
-
-
-        <!-- LATEST -->
-
-        <h2 class="section-title">
-            Latest Projects
-        </h2>
-
-        <div class="project-grid">
-
-            {% for project in latest_projects %}
-
-            <div class="project-card">
-
-                {% with first_image=project.images.first %}
-
-                {% if first_image %}
-
-                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
-
-                {% else %}
-
-                <div class="no-image">
-                    New Project
-                </div>
-
-                {% endif %}
-
-                {% endwith %}
-
-                <div class="project-content">
-
-                    <h3>
-                        {{ project.title }}
-                    </h3>
-
-                    <p>
-                        {{ project.details|truncatechars:100 }}
-                    </p>
-
-                    <p>
-                        Target:
-                        {{ project.target }} EGP
-                    </p>
-
-                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-            {% empty %}
-
-            <p>No projects available.</p>
-
-            {% endfor %}
-
-        </div>
+        {% endfor %}
 
     </div>
 
-    {% endblock %}
+
+
+    <!-- FEATURED -->
+
+    <h2 class="section-title">
+        Featured Projects
+    </h2>
+
+
+    <div class="project-grid">
+        {% for project in featured_projects %}
+        <div class="project-card">
+
+            {% with first_image=project.images.first %}
+            {% if first_image %}
+            <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
+            {% else %}
+            <div class="no-image">Featured</div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="project-content">
+
+                <h3>{{ project.title }}</h3>
+
+                <p>{{ project.details|truncatechars:90 }}</p>
+
+                <div class="donation-info">
+                    <span>
+                        Raised:
+                        <strong>{{ project.total_donations }} EGP</strong>
+                    </span>
+
+                    <span>
+                        Target:
+                        <strong>{{ project.target }} EGP</strong>
+                    </span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ project.progress }}%;">
+                    </div>
+                </div>
+
+                <div class="card-bottom">
+                    <span class="rating">
+                        ★ {{ project.avg_rating|default:0|floatformat:1 }}
+                    </span>
+
+                    <span class="progress-percent">
+                        {{ project.progress|floatformat:0 }}%
+                    </span>
+                </div>
+
+                <div class="card-buttons">
+                    <a class="donate-btn" href="{% url 'donate' project.pk %}">
+                        Donate
+                    </a>
+
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        {% empty %}
+        <p>No featured projects.</p>
+        {% endfor %}
+    </div>
+
+
+
+    <!-- LATEST -->
+
+    <h2 class="section-title">
+        Latest Projects
+    </h2>
+
+
+    <div class="project-grid">
+        {% for project in latest_projects %}
+        <div class="project-card">
+
+            {% with first_image=project.images.first %}
+            {% if first_image %}
+            <img class="project-image" src="{{ first_image.image.url }}" alt="{{ project.title }}">
+            {% else %}
+            <div class="no-image">Latest Project</div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="project-content">
+
+                <h3>{{ project.title }}</h3>
+
+                <p>{{ project.details|truncatechars:90 }}</p>
+
+                <div class="donation-info">
+                    <span>
+                        Raised:
+                        <strong>{{ project.total_donations }} EGP</strong>
+                    </span>
+
+                    <span>
+                        Target:
+                        <strong>{{ project.target }} EGP</strong>
+                    </span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ project.progress }}%;">
+                    </div>
+                </div>
+
+                <div class="card-bottom">
+                    <span class="rating">
+                        ★ {{ project.avg_rating|default:0|floatformat:1 }}
+                    </span>
+
+                    <span class="progress-percent">
+                        {{ project.progress|floatformat:0 }}%
+                    </span>
+                </div>
+
+                <div class="card-buttons">
+                    <a class="donate-btn" href="{% url 'donate' project.pk %}">
+                        Donate
+                    </a>
+
+                    <a class="view-btn" href="{% url 'project_detail' project.pk %}">
+                        View Project
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        {% empty %}
+        <p>No latest projects.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

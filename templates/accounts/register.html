@@ -1,6 +1,176 @@
-{% extends "base.html" %}{% block title %}Register{% endblock %}{% block content %}
-<h1>Create Account</h1>
-<p class="muted">Register to use the Crowd-Funding platform.</p>
-<form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button type="submit">Register</button></form>
-<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<style>
+    .register-page {
+        min-height: 75vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 45px 20px;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 520px;
+        background: #ffffff;
+        padding: 38px 35px;
+        border-radius: 22px;
+        border: 1px solid #dcece6;
+        box-shadow: 0 15px 40px rgba(39, 93, 75, 0.10);
+    }
+
+    .register-card h1 {
+        margin: 0 0 8px;
+        text-align: center;
+        color: #1d493e;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .register-subtitle {
+        text-align: center;
+        color: #7a8c86;
+        font-size: 13px;
+        margin: 0 0 28px;
+    }
+
+    .register-form p {
+        margin: 0 0 16px;
+    }
+
+    .register-form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #31564c;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .register-form input,
+    .register-form select {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #d7e6e0;
+        border-radius: 11px;
+        background: #fbfdfc;
+        color: #29483f;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .register-form input:focus,
+    .register-form select:focus {
+        border-color: #45b995;
+        box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.12);
+        background: #ffffff;
+    }
+
+    .register-form input[type="file"] {
+        padding: 9px;
+        background: #ffffff;
+    }
+
+    .register-form button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 12px;
+        border: none;
+        border-radius: 11px;
+        background: #45b995;
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.25s ease;
+    }
+
+    .register-form button:hover {
+        background: #319b7d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(39, 93, 75, 0.15);
+    }
+
+    .register-help {
+        margin-top: 22px;
+        text-align: center;
+        color: #74857f;
+        font-size: 13px;
+    }
+
+    .register-help a {
+        color: #2c8068;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .register-help a:hover {
+        color: #1d493e;
+        text-decoration: underline;
+    }
+
+    .register-form ul.errorlist {
+        margin: 5px 0 8px;
+        padding: 0;
+        list-style: none;
+        color: #b23a3a;
+        font-size: 12px;
+    }
+
+    .register-form .helptext {
+        display: block;
+        margin-top: 5px;
+        color: #8a9b95;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+        .register-page {
+            padding: 35px 15px;
+        }
+
+        .register-card {
+            padding: 30px 22px;
+        }
+    }
+</style>
+
+<div class="register-page">
+
+    <div class="register-card">
+
+        <h1>Create Account</h1>
+
+        <p class="register-subtitle">
+            Join CrowdFunding and start making an impact
+        </p>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              class="register-form">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+        <p class="register-help">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
 {% endblock %}

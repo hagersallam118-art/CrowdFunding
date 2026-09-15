@@ -1,1 +1,179 @@
-{% extends "base.html" %}{% block content %}<h1>Delete Account</h1><p>This action cannot be undone. Enter your password to confirm.</p><form method="post">{% csrf_token %}<label>Password</label><input type="password" name="password" required><button class="danger" type="submit">Confirm Delete</button> <a class="btn" href="{% url 'profile' %}">Cancel</a></form>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+
+<style>
+.delete-page {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+}
+
+.delete-card {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 40px 35px;
+    border-radius: 22px;
+    border: 1px solid #eadcdc;
+    box-shadow: 0 15px 40px rgba(80, 50, 50, 0.08);
+    text-align: center;
+}
+
+.delete-icon {
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #fff1f1;
+    color: #b23a3a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.delete-card h1 {
+    margin: 0 0 12px;
+    color: #1d493e;
+    font-size: 29px;
+}
+
+.delete-warning {
+    color: #7a6b68;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.delete-form {
+    text-align: left;
+}
+
+.delete-form label {
+    display: block;
+    margin-bottom: 7px;
+    color: #31564c;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.delete-form input {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #d7e6e0;
+    border-radius: 10px;
+    background: #fafdfc;
+    color: #374740;
+    font-size: 14px;
+    outline: none;
+    transition: .2s;
+}
+
+.delete-form input:focus {
+    border-color: #45b995;
+    box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.12);
+}
+
+.delete-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.delete-btn,
+.cancel-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.delete-btn {
+    border: none;
+    background: #b23a3a;
+    color: white;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #963333;
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+    border: 1px solid #d7e6e0;
+    background: #f8fcfa;
+    color: #2c8068;
+}
+
+.cancel-btn:hover {
+    background: #eaf6f1;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 500px) {
+    .delete-card {
+        padding: 32px 22px;
+    }
+
+    .delete-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="delete-page">
+
+    <div class="delete-card">
+
+        <div class="delete-icon">⚠</div>
+
+        <h1>Delete Account</h1>
+
+        <p class="delete-warning">
+            This action cannot be undone.
+            Please enter your password to confirm deleting your account.
+        </p>
+
+        <form method="post" class="delete-form">
+
+            {% csrf_token %}
+
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                placeholder="Enter your password"
+            >
+
+            <div class="delete-actions">
+
+                <button class="delete-btn" type="submit">
+                    Confirm Delete
+                </button>
+
+                <a class="cancel-btn" href="{% url 'profile' %}">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

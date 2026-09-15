@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
 
-{% block content %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}">
+{% endblock %}{% block content %}
 
 <style>
     * {
@@ -8,49 +11,72 @@
     }
 
     .project-page {
-        max-width: 1180px;
-        margin: 35px auto 70px;
+        max-width: 1200px;
+        margin: 35px auto 80px;
         padding: 0 22px;
         font-family: Arial, sans-serif;
-        color: #1f2937;
+        color: #24352e;
     }
 
+    /* =========================
+       BACK LINK
+    ========================= */
+
     .back-link {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
         margin-bottom: 22px;
-        color: #15803d;
+        padding: 9px 14px;
+        border-radius: 10px;
+        background: #eaf7f1;
+        color: #237b5c;
         text-decoration: none;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 800;
+        transition: all .2s ease;
     }
 
     .back-link:hover {
-        text-decoration: underline;
+        background: #d8eee4;
+        color: #176247;
+        transform: translateX(-2px);
+        text-decoration: none;
     }
+
+    /* =========================
+       MAIN LAYOUT
+    ========================= */
 
     .project-layout {
         display: grid;
-        grid-template-columns: 1.65fr 0.8fr;
-        gap: 35px;
+        grid-template-columns: minmax(0, 1.65fr) minmax(280px, .8fr);
+        gap: 30px;
         align-items: start;
     }
 
     .main-card,
     .side-card,
     .section-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        background: #ffffff;
+        border: 1px solid #dfece6;
+        border-radius: 22px;
+        box-shadow: 0 10px 32px rgba(39, 93, 75, .07);
     }
 
     .main-card {
         overflow: hidden;
     }
 
+    /* =========================
+       IMAGE SLIDER
+    ========================= */
+
     .image-area {
         position: relative;
-        background: #f3f4f6;
-        min-height: 360px;
+        background: linear-gradient(135deg, #eaf7f1, #d9eee5);
+        min-height: 430px;
+        overflow: hidden;
     }
 
     .image-slider {
@@ -64,197 +90,304 @@
         display: none;
     }
 
-    .project-image {
+    .main-card .project-image {
         width: 100%;
         height: 430px;
         object-fit: cover;
         flex: 0 0 100%;
+        display: block;
     }
 
-    .no-image {
+    .main-card .no-image {
         height: 430px;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: #6b7280;
-        font-size: 18px;
+        color: #43806b;
+        font-size: 17px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #e8f7f0, #cce8dc);
     }
 
     .slider-btn {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 44px;
-        height: 44px;
-        border: none;
+        width: 46px;
+        height: 46px;
+        border: 1px solid rgba(255, 255, 255, .8);
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.92);
-        font-size: 25px;
+        background: rgba(255, 255, 255, .94);
+        color: #277253;
+        font-size: 28px;
+        line-height: 1;
         cursor: pointer;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .16);
         z-index: 5;
+        transition: all .2s ease;
     }
 
     .slider-btn:hover {
-        background: white;
+        background: #ffffff;
+        color: #176143;
+        transform: translateY(-50%) scale(1.06);
     }
 
     .slider-left {
-        left: 15px;
+        left: 16px;
     }
 
     .slider-right {
-        right: 15px;
+        right: 16px;
     }
 
+    /* =========================
+       PROJECT CONTENT
+    ========================= */
+
     .project-content {
-        padding: 30px;
+        padding: 30px 32px 32px;
+        background: #ffffff;
     }
 
     .category-badge {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
         padding: 7px 13px;
         border-radius: 999px;
-        background: #dcfce7;
-        color: #15803d;
-        font-weight: bold;
-        font-size: 13px;
+        background: #e2f5ed;
+        color: #277253;
+        border: 1px solid #cce9dc;
+        font-weight: 800;
+        font-size: 12px;
         margin-bottom: 13px;
     }
 
     .project-title {
-        font-size: 34px;
-        line-height: 1.15;
+        font-size: 35px;
+        line-height: 1.2;
         margin: 0 0 15px;
-        color: #111827;
+        color: #173d30;
+        font-weight: 850;
+        letter-spacing: -.5px;
     }
 
     .project-description {
-        color: #6b7280;
-        line-height: 1.8;
-        font-size: 16px;
+        color: #64756e;
+        line-height: 1.85;
+        font-size: 15px;
         white-space: pre-line;
     }
 
     .creator-line {
-        margin-top: 22px;
-        border-top: 1px solid #e5e7eb;
+        margin-top: 24px;
+        border-top: 1px solid #e8f0ed;
         padding-top: 18px;
-        color: #4b5563;
+        color: #82908b;
+        font-size: 13px;
     }
 
+    .creator-line strong {
+        color: #245642;
+        font-weight: 800;
+    }
+
+    .tags-line {
+        margin-top: 17px;
+        padding-top: 16px;
+        border-top: 1px solid #edf3f0;
+        color: #7b8b85;
+        font-size: 13px;
+        line-height: 2;
+    }
+
+    .tags-line strong {
+        color: #315c4d;
+        margin-right: 6px;
+    }
+
+    .tags-line span {
+        display: inline-block;
+        margin: 3px 4px 3px 0;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: #eef8f4;
+        border: 1px solid #d8eee5;
+        color: #28765a;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    /* =========================
+       SIDE CARD
+    ========================= */
+
     .side-card {
-        padding: 25px;
+        padding: 27px;
         position: sticky;
         top: 20px;
     }
 
     .money-raised {
-        font-size: 30px;
-        font-weight: 800;
-        color: #15803d;
-        margin-bottom: 4px;
+        font-size: 31px;
+        font-weight: 850;
+        color: #278a69;
+        margin-bottom: 5px;
+        letter-spacing: -.5px;
     }
 
     .target-text {
-        color: #6b7280;
-        margin-bottom: 16px;
+        color: #7a8983;
+        font-size: 13px;
+        margin-bottom: 18px;
     }
 
     .progress-bg {
-        background: #e5e7eb;
-        height: 12px;
+        background: #e5f1ec;
+        height: 10px;
         border-radius: 20px;
         overflow: hidden;
-        margin: 15px 0;
+        margin: 15px 0 20px;
     }
 
     .progress-fill {
         height: 100%;
-        background: #16a34a;
+        background: linear-gradient(90deg, #4bc8a5, #299f7d);
         border-radius: 20px;
         max-width: 100%;
+        transition: width .4s ease;
     }
 
     .stats-row {
         display: flex;
         justify-content: space-between;
-        gap: 15px;
-        margin: 18px 0 25px;
+        gap: 12px;
+        margin: 18px 0 24px;
     }
 
     .stat {
         flex: 1;
-        background: #f9fafb;
-        border-radius: 14px;
+        background: #f4faf7;
+        border: 1px solid #e0eee8;
+        border-radius: 15px;
         padding: 14px 10px;
         text-align: center;
     }
 
     .stat strong {
         display: block;
-        color: #111827;
+        color: #214c3c;
         font-size: 18px;
+        font-weight: 850;
     }
 
     .stat span {
-        color: #6b7280;
-        font-size: 12px;
+        display: block;
+        margin-top: 4px;
+        color: #81918a;
+        font-size: 11px;
+        font-weight: 600;
     }
+
+    /* =========================
+       BUTTONS
+    ========================= */
 
     .action-btn {
         width: 100%;
         display: block;
-        padding: 14px 18px;
+        padding: 13px 18px;
         border: none;
-        border-radius: 12px;
+        border-radius: 11px;
         text-align: center;
-        font-weight: 700;
-        font-size: 15px;
+        font-weight: 800;
+        font-size: 13px;
         cursor: pointer;
         text-decoration: none;
         margin-top: 10px;
+        transition: all .22s ease;
     }
 
     .green-btn {
-        background: #16a34a;
+        background: linear-gradient(135deg, #48b997, #2d9f7d);
         color: white;
+        box-shadow: 0 5px 14px rgba(45, 159, 125, .18);
     }
 
     .green-btn:hover {
-        background: #15803d;
+        background: linear-gradient(135deg, #39a985, #258d6f);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(45, 159, 125, .25);
     }
 
     .outline-btn {
-        background: white;
-        color: #15803d;
-        border: 1px solid #16a34a;
+        background: #ffffff;
+        color: #287b5d;
+        border: 1px solid #9fd2bf;
+    }
+
+    .outline-btn:hover {
+        background: #edf8f4;
+        color: #1c6249;
+        border-color: #7fc4ac;
     }
 
     .danger-btn {
-        background: #fff1f2;
-        color: #be123c;
-        border: 1px solid #fecdd3;
+        background: #fff5f5;
+        color: #c2414d;
+        border: 1px solid #f1c9ce;
     }
 
+    .danger-btn:hover {
+        background: #fee9eb;
+        color: #a8323e;
+        border-color: #e9aeb6;
+    }
+
+    /* =========================
+       SECTION CARDS
+    ========================= */
+
     .section-card {
-        padding: 28px;
+        padding: 30px;
         margin-top: 30px;
     }
 
     .section-title {
-        font-size: 24px;
-        margin: 0 0 22px;
-        color: #111827;
+        position: relative;
+        font-size: 23px;
+        margin: 0 0 24px;
+        padding-bottom: 12px;
+        color: #214c3c;
+        font-weight: 850;
     }
 
+    .section-title::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 42px;
+        height: 3px;
+        border-radius: 10px;
+        background: #45b995;
+    }
+
+    /* =========================
+       FORMS
+    ========================= */
+
     .form-box p {
-        margin-bottom: 15px;
+        margin: 0 0 15px;
     }
 
     .form-box label {
         display: block;
-        font-weight: 700;
+        color: #36574a;
+        font-weight: 800;
+        font-size: 13px;
         margin-bottom: 7px;
     }
 
@@ -262,166 +395,346 @@
     .form-box textarea,
     .form-box select {
         width: 100%;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        padding: 12px;
-        font-size: 15px;
+        border: 1px solid #d5e3dd;
+        background: #fbfdfc;
+        color: #30483e;
+        border-radius: 11px;
+        padding: 12px 13px;
+        font-size: 14px;
         outline: none;
+        transition: all .2s ease;
     }
 
     .form-box textarea {
         resize: vertical;
+        min-height: 100px;
     }
 
     .form-box input:focus,
     .form-box textarea:focus,
     .form-box select:focus {
-        border-color: #16a34a;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
+        border-color: #57b99b;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(69, 185, 149, .11);
+    }
+
+    .form-box ul.errorlist {
+        margin: 5px 0 8px;
+        padding: 0;
+        list-style: none;
+        color: #c2414d;
+        font-size: 12px;
     }
 
     .two-columns {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 25px;
+        gap: 30px;
     }
 
+   /* =========================
+   RATING + REPORT
+========================= */
+
+.rating-number {
+    display: inline-block;
+    font-size: 34px;
+    font-weight: 900;
+    color: #d99518;
+    margin-bottom: 6px;
+    letter-spacing: -1px;
+}
+
+.stars {
+    color: #f4b942;
+    font-size: 22px;
+    letter-spacing: 3px;
+    margin-bottom: 22px;
+}
+
+/* Form containers */
+
+.form-box {
+    background: #f8fcfa;
+    border: 1px solid #e1eee9;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+.form-box p {
+    margin: 0 0 15px;
+}
+
+.form-box label {
+    display: block;
+    color: #315247;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.form-box input,
+.form-box textarea,
+.form-box select {
+    width: 100%;
+    border: 1px solid #d3e4dd;
+    border-radius: 10px;
+    padding: 12px 13px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.form-box textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-box input:focus,
+.form-box textarea:focus,
+.form-box select:focus {
+    border-color: #45b995;
+    box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.10);
+}
+
+/* Rating button */
+
+.form-box .green-btn {
+    margin-top: 5px;
+}
+
+/* Report section */
+
+.form-box + .form-box {
+    margin-top: 10px;
+}
+
+/* Report button */
+
+.form-box .danger-btn {
+    margin-top: 8px;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
     .rating-number {
-        font-size: 32px;
-        font-weight: 800;
-        color: #f59e0b;
-        margin-bottom: 5px;
+        font-size: 30px;
     }
 
     .stars {
-        color: #f59e0b;
         font-size: 20px;
-        margin-bottom: 18px;
     }
 
+    .form-box {
+        padding: 15px;
+    }
+}
+
+    /* =========================
+   COMMENTS
+========================= */
+
     .comment {
-        border: 1px solid #e5e7eb;
-        border-radius: 15px;
-        padding: 18px;
-        margin-bottom: 15px;
-        background: #fafafa;
+        position: relative;
+        background: linear-gradient(145deg, #ffffff, #f8fcfa);
+        border: 1px solid #dcece6;
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 20px rgba(39, 93, 75, 0.07);
+        transition: 0.25s ease;
+    }
+
+    .comment:hover {
+        transform: translateY(-2px);
+        border-color: #b8ddcf;
+        box-shadow: 0 12px 28px rgba(39, 93, 75, 0.11);
     }
 
     .comment-head {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 13px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e7f1ed;
     }
 
     .comment-user {
+        color: #1d4938;
+        font-size: 15px;
         font-weight: 800;
-        color: #111827;
+    }
+
+    .comment-user::before {
+        content: "👤";
+        margin-right: 7px;
     }
 
     .comment-date {
-        color: #9ca3af;
-        font-size: 12px;
+        color: #8a9993;
+        font-size: 11px;
+        white-space: nowrap;
     }
 
     .comment-text {
-        line-height: 1.6;
-        color: #4b5563;
+        margin: 0;
+        color: #53645d;
+        font-size: 14px;
+        line-height: 1.8;
+        word-break: break-word;
     }
 
+    /* Report + Reply area */
+
     .small-form {
-        margin-top: 13px;
+        margin-top: 15px;
         display: flex;
         gap: 8px;
+        align-items: center;
     }
 
     .small-form input {
         flex: 1;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        padding: 8px;
+        border: 1px solid #d6e4df;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #fbfefd;
+        color: #374151;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .small-form input:focus {
+        border-color: #45b995;
+        box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.10);
+    }
+
+    .small-form input::placeholder {
+        color: #9aa9a3;
     }
 
     .small-btn {
         border: none;
-        border-radius: 8px;
-        padding: 8px 12px;
+        border-radius: 9px;
+        padding: 9px 13px;
         cursor: pointer;
-        font-weight: bold;
+        font-weight: 800;
+        font-size: 12px;
+        transition: 0.2s ease;
+    }
+
+    .small-btn:hover {
+        transform: translateY(-1px);
     }
 
     .report-small {
-        background: #fee2e2;
-        color: #b91c1c;
+        background: #fff1f2;
+        color: #be123c;
+        border: 1px solid #fecdd3;
     }
+
+    .report-small:hover {
+        background: #ffe4e6;
+    }
+
+    /* Reply */
 
     .reply {
-        margin: 12px 0 0 25px;
-        padding: 12px;
-        border-left: 3px solid #16a34a;
-        background: white;
-        border-radius: 5px;
+        margin: 15px 0 0 28px;
+        padding: 14px 16px;
+        border-left: 3px solid #45b995;
+        background: #f3faf7;
+        border-radius: 0 12px 12px 0;
+        color: #53645d;
     }
 
-    .similar-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-    }
-
-    .similar-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        overflow: hidden;
-        background: white;
-        transition: 0.2s;
-    }
-
-    .similar-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 24px rgba(0, 0, 0, .08);
-    }
-
-    .similar-image {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        background: #f3f4f6;
-    }
-
-    .similar-info {
-        padding: 15px;
-    }
-
-    .similar-info h3 {
-        font-size: 16px;
-        margin: 0 0 8px;
-    }
-
-    .similar-info p {
+    .reply strong {
+        color: #277253;
         font-size: 13px;
-        color: #6b7280;
-        line-height: 1.5;
     }
 
-    .similar-link {
-        color: #15803d;
-        font-weight: bold;
-        text-decoration: none;
+    .reply div {
+        color: #5f7069 !important;
+        line-height: 1.7;
         font-size: 13px;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 600px) {
+        .comment {
+            padding: 17px;
+            border-radius: 15px;
+        }
+
+        .comment-head {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .comment-date {
+            font-size: 10px;
+        }
+
+        .small-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .small-form input,
+        .small-form button {
+            width: 100%;
+        }
+
+        .reply {
+            margin-left: 12px;
+        }
     }
 
     .login-message {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        padding: 15px;
+        background: #eef9f4;
+        border: 1px solid #cce9dc;
+        padding: 14px 15px;
         border-radius: 12px;
         text-align: center;
         margin-top: 15px;
-        color: #166534;
+        color: #287253;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.5;
     }
 
-    @media (max-width: 900px) {
+    /* =========================
+       SIMILAR PROJECTS
+    ========================= */
+
+    .similar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .similar-grid .project-card {
+        min-width: 0;
+    }
+
+    .similar-grid .project-image,
+    .similar-grid .no-image {
+        height: 185px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1000px) {
         .project-layout {
             grid-template-columns: 1fr;
         }
@@ -430,53 +743,90 @@
             position: static;
         }
 
+        .similar-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 750px) {
         .two-columns {
             grid-template-columns: 1fr;
         }
 
-        .similar-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .project-image,
-        .no-image {
-            height: 330px;
+        .section-card {
+            padding: 23px;
         }
     }
 
-    @media (max-width: 550px) {
+    @media (max-width: 600px) {
         .project-page {
             padding: 0 12px;
             margin-top: 18px;
         }
 
         .project-content {
-            padding: 20px;
+            padding: 22px;
         }
 
         .project-title {
             font-size: 27px;
         }
 
+        .main-card .project-image,
+        .main-card .no-image {
+            height: 270px;
+        }
+
+        .image-area {
+            min-height: 270px;
+        }
+
+        .slider-btn {
+            width: 38px;
+            height: 38px;
+            font-size: 23px;
+        }
+
+        .side-card {
+            padding: 21px;
+        }
+
+        .money-raised {
+            font-size: 27px;
+        }
+
+        .stats-row {
+            flex-direction: row;
+        }
+
         .similar-grid {
             grid-template-columns: 1fr;
         }
 
-        .project-image,
-        .no-image {
-            height: 260px;
+        .comment {
+            padding: 16px;
         }
 
-        .stats-row {
+        .comment-head {
+            align-items: flex-start;
             flex-direction: column;
+            gap: 5px;
+        }
+
+        .small-form {
+            flex-direction: column;
+        }
+
+        .small-btn {
+            width: 100%;
+        }
+
+        .reply {
+            margin-left: 12px;
         }
     }
 </style>
-
-
-<div class="project-page">
-
-    <a href="/" class="back-link">← Back to Home</a>
+<div class="project-page"><a href="/" class="back-link">← Back to Home</a>
 
     <div class="project-layout">
 
@@ -536,6 +886,7 @@
                         {{ project.creator.last_name }}
                     </strong>
                 </div>
+
                 <div class="tags-line">
                     <strong>Tags:</strong>
 
@@ -805,42 +1156,69 @@
 
             {% for similar in similar_projects %}
 
-            <div class="similar-card">
+            <div class="project-card">
 
                 {% with first_image=similar.images.first %}
-
                 {% if first_image %}
-
-                <img class="similar-image" src="{{ first_image.image.url }}" alt="{{ similar.title }}">
-
+                <img class="project-image" src="{{ first_image.image.url }}" alt="{{ similar.title }}">
                 {% else %}
-
-                <div class="similar-image" style="
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            color:#9ca3af;
-                        ">
-                    No Image
+                <div class="no-image">
+                    CrowdFunding
                 </div>
-
                 {% endif %}
-
                 {% endwith %}
 
-                <div class="similar-info">
+                <div class="project-content">
 
                     <h3>
                         {{ similar.title }}
                     </h3>
 
                     <p>
-                        {{ similar.details|truncatechars:80 }}
+                        {{ similar.details|truncatechars:90 }}
                     </p>
 
-                    <a href="{% url 'project_detail' similar.pk %}" class="similar-link">
-                        View Project →
-                    </a>
+                    <div class="donation-info">
+
+                        <span>
+                            Raised:
+                            <strong>{{ similar.total_donations }} EGP</strong>
+                        </span>
+
+                        <span>
+                            Target:
+                            <strong>{{ similar.target }} EGP</strong>
+                        </span>
+
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ similar.progress }}%;"></div>
+                    </div>
+
+                    <div class="card-bottom">
+
+                        <span class="rating">
+                            ★ {{ similar.avg_rating|default:0|floatformat:1 }}
+                        </span>
+
+                        <span class="progress-percent">
+                            {{ similar.progress|floatformat:0 }}%
+                        </span>
+
+                    </div>
+
+                    <div class="card-buttons">
+
+                        <a href="{% url 'donate' similar.pk %}" class="donate-btn">
+                            Donate
+                        </a>
+
+                        <a href="{% url 'project_detail' similar.pk %}" class="view-btn">
+                            View Project
+                        </a>
+
+                    </div>
 
                 </div>
 
@@ -858,6 +1236,4 @@
 
     </div>
 
-</div>
-
-{% endblock %}
+</div>{% endblock %}

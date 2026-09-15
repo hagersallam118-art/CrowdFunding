@@ -1,6 +1,173 @@
-{% extends "base.html" %}{% block title %}Login{% endblock %}{% block content %}
-<h1>Login</h1>
-<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Login</button></form>
-<p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
-<p>Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        min-height: 75vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 430px;
+        background: #ffffff;
+        padding: 38px 35px;
+        border-radius: 22px;
+        border: 1px solid #dcece6;
+        box-shadow: 0 15px 40px rgba(39, 93, 75, 0.10);
+    }
+
+    .login-card h1 {
+        margin: 0 0 8px;
+        text-align: center;
+        color: #1d493e;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .login-subtitle {
+        text-align: center;
+        color: #7a8c86;
+        font-size: 13px;
+        margin-bottom: 28px;
+    }
+
+    .login-form p {
+        margin-bottom: 17px;
+    }
+
+    .login-form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #31564c;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .login-form input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #d7e6e0;
+        border-radius: 11px;
+        background: #fbfdfc;
+        color: #29483f;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .login-form input:focus {
+        border-color: #45b995;
+        box-shadow: 0 0 0 3px rgba(69, 185, 149, 0.12);
+        background: #ffffff;
+    }
+
+    .login-form button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 12px;
+        border: none;
+        border-radius: 11px;
+        background: #45b995;
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.25s ease;
+    }
+
+    .login-form button:hover {
+        background: #319b7d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(39, 93, 75, 0.15);
+    }
+
+    .login-links {
+        margin-top: 22px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .login-links p {
+        margin: 9px 0;
+        color: #74857f;
+    }
+
+    .login-links a {
+        color: #2c8068;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-links a:hover {
+        color: #1d493e;
+        text-decoration: underline;
+    }
+
+    .login-form ul.errorlist {
+        margin: 5px 0 8px;
+        padding: 0;
+        list-style: none;
+        color: #b23a3a;
+        font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .login-page {
+            padding: 35px 15px;
+        }
+
+        .login-card {
+            padding: 30px 22px;
+        }
+    }
+</style>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <h1>Welcome Back</h1>
+
+        <p class="login-subtitle">
+            Login to continue to your CrowdFunding account
+        </p>
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Login
+            </button>
+        </form>
+
+        <div class="login-links">
+
+            <p>
+                <a href="{% url 'password_reset' %}">
+                    Forgot Password?
+                </a>
+            </p>
+
+            <p>
+                Don't have an account?
+                <a href="{% url 'register' %}">
+                    Register
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

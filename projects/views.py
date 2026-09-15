@@ -10,7 +10,26 @@ from .models import Project, ProjectImage, Comment, Rating, Report
 
 
 def project_list(request):
-    projects = Project.objects.filter(is_cancelled=False).order_by("-created_at")
+    projects = (
+        Project.objects
+        .filter(is_cancelled=False)
+        .annotate(avg_rating=Avg("ratings__value"))
+        .order_by("-created_at")
+    )
+
+    for project in projects:
+        project.total_donations = sum(
+            donation.amount
+            for donation in project.donations.all()
+        )
+
+        if project.target:
+            project.progress = min(
+                float(project.total_donations) / float(project.target) * 100,
+                100
+            )
+        else:
+            project.progress = 0
 
     return render(
         request,
@@ -35,12 +54,31 @@ def project_detail(request, pk):
     average_rating = project.ratings.aggregate(
          avg=Avg("value")
         )["avg"] or 0
-    similar_projects = Project.objects.filter(
-         tags__in=project.tags.all(),
-         is_cancelled=False
-              ).exclude(
-         pk=project.pk
-             ).distinct()[:4]
+    similar_projects = (
+     Project.objects
+    .filter(
+        category=project.category,
+        tags__in=project.tags.all(),
+        is_cancelled=False
+    )
+    .annotate(avg_rating=Avg("ratings__value"))
+    .exclude(pk=project.pk)
+    .distinct()[:4]
+    )
+
+    for similar in similar_projects:
+        similar.total_donations = sum(
+            donation.amount
+          for donation in similar.donations.all()
+        )
+
+        if similar.target:
+             similar.progress = min(
+    float(similar.total_donations) / float(similar.target) * 100,
+    100
+        )
+        else:
+              similar.progress = 0
 
 
     return render(
